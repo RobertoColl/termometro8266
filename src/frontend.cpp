@@ -16,6 +16,8 @@ extern String ubicacion;
 extern String ssid;
 extern String ssid_pass;
 extern String passwd_AP;
+extern String fuota_server;
+extern String area;
   
 
 //------Páginas web-------------------------------------------------------
@@ -32,7 +34,7 @@ void handle_root() {
  header="<!DOCTYPE html>\
  <html lang='en'>\
   <head>\
-   <title>Lámpara ws2812</title>\
+   <title>Monitor remoto</title>\
     <meta charset='utf-8'>\
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>\
     <meta name='viewport' content='width=device-width, initial-scale=1'>\
@@ -79,7 +81,7 @@ void handle_root() {
          <span class='icon-bar'></span>\
          <span class='icon-bar'></span>\
         </button>\
-        <a class='navbar-brand' href='#'>Lámpara ws2812</a>\
+        <a class='navbar-brand' href='#'>Monitor remoto</a>\
        </div>\
        <div class='collapse navbar-collapse' id='navbar'>\
         <ul class='nav navbar-nav navbar-right'>\
@@ -206,20 +208,8 @@ void handle_estado() {
    <div class='panel-heading'>" + device + " " + ubicacion + "</div>\
    <div class='panel-body'>\
     <form>\
-     <div class='well'>\
-      <button type='button' class='btn btn-warning btn-lg btn-block' name='calido' id='calido' value='1' onclick='onchangech(11)'>Cálido</button>\
-     </div>\
-     <div class='well'>\
-      <button type='button' class='btn btn-info btn-lg btn-block' name='natural' id='natural' value='1' onclick='onchangech(12)'>Natural</button>\
-     </div>\
-     <div class='well'>\
-      <button type='button' class='btn btn-primary btn-lg btn-block' name='blanco' id='blanco' value='1' onclick='onchangech(13)'>Blanco</button>\
-     </div>\
-     <div class='well'>\
-      <button type='button' class='btn btn-danger btn-lg btn-block' name='apaga' id='apaga' value='1' onclick='onchangech(10)'>Apaga</button>\
-     </div>\
-     <div class='well'>\
-      <input type='color' value='#ff0000' id='color_p' class='' onchange='color_picker()'>\
+     <div class='well'><h2 class='text-center'>Estado</h2>\
+     <label for='mod'>Valores instantáneos medidos </label>\
      </div>\
     </form>\
    </div>\
@@ -241,7 +231,7 @@ void handle_config() {
    <div class='panel-heading'>Configuración</div>\
    <div class='panel-body'>\
     <form name='actualiza' action='/update_settings' method='post'>\
-     <div class='well'><h2 class='text-center'>Dispositivo</h2>\
+     <div class='well'><h2 class='text-center'>Red</h2>\
       <div class='form-group'>\
        <label for='mod'>Red</label>\
        <input type='text' class='form-control' name='ssid' id='ssid' value='"+ ssid +"'>\
@@ -255,20 +245,30 @@ void handle_config() {
        <input type='text' class='form-control' name='passwd_AP' id='passwd_AP' value='"+ passwd_AP +"'>\
       </div>\
       <div class='form-group'>\
-       <label for='dev'>Nombre</label>\
-       <input type='text' class='form-control' name='device' id='device' value='" + device + "'>\
-      </div>\
-      <div class='form-group'>\
        <label for='mqtt_server'>Broker</label>\
        <input type='text' class='form-control' name='mqtt_server' id='mqtt_server' value='" + mqtt_server + "'>\
+      </div>\
+      <div class='form-group'>\
+       <label for='mqtt_server'>FUOTA Server</label>\
+       <input type='text' class='form-control' name='fuota_server' id='mqtt_server' value='" + fuota_server + "'>\
       </div>\
       <div class='form-group'>\
        <label for='mqtt_server'>Puerto Broker</label>\
        <input type='text' class='form-control' name='mqtt_tcp_str' id='mqtt_tcp_str' value='" + mqtt_tcp_str + "'>\
       </div>\
+     </div>\
+     <div class='well'><h2 class='text-center'>Dispositivo</h2>\
+      <div class='form-group'>\
+       <label for='dev'>Nombre</label>\
+       <input type='text' class='form-control' name='device' id='device' value='" + device + "'>\
+      </div>\
       <div class='form-group'>\
        <label for='ubic'>Ubicacion</label>\
        <input type='text' class='form-control' name='ubic' id='ubic' value='" + ubicacion + "'>\
+      </div>\
+      <div class='form-group'>\
+       <label for='area'>Area</label>\
+       <input type='text' class='form-control' name='area' id='area' value='" + area + "'>\
       </div>\
      </div>\
      <div class='form-group'>\
@@ -297,7 +297,7 @@ void handle_info() {
    <div class='panel-heading'>Información</div>\
    <div class='panel-body'>\
     <div class='form-group'>\
-     <p>Lámpara con WS2812</p>\
+     <p>Dispositivo de monitoreo remoto</p>\
      <p>mcastello ingeniería</p>\
      <p>Versiones: hardware "+hversion+", firmware "+fversion+"</p>\
     </div>\

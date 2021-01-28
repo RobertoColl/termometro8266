@@ -14,9 +14,19 @@ extern String device;
 extern String mqtt_server;
 extern String mqtt_tcp_str;
 extern String ubicacion;
+extern String area;
 extern String ssid;
 extern String ssid_pass;
 extern String header;
+/*extern uint32_t device_eeprom_pos;
+extern uint32_t mqtt_server_eeprom_pos;
+extern uint32_t mqtt_tcp_str_eeprom_pos;
+extern uint32_t passwd_AP_eeprom_pos;
+extern uint32_t ssid_eeprom_pos;
+extern uint32_t ssid_pass_eeprom_pos;
+extern uint32_t ubicacion_eeprom_pos;
+extern uint32_t fuota_eeprom_pos;
+extern uint32_t area_eeprom_pos;*/
 
 int trys_load_files=3;   //Cantidad de intentos de carga de archivos pedidos por el browser
 File file_bs_css,file_bs_js,file_jq,file_font;
@@ -46,83 +56,65 @@ void init_webserver(void){
 
 
 void auth(void){
-    if (!web_server.authenticate(www_username.c_str(), passwd_AP.c_str())){
+  if (!web_server.authenticate(www_username.c_str(), passwd_AP.c_str())){
     return web_server.requestAuthentication();
   }
 }
 
-/*
-void handle_setcolor(void){
-  String col=web_server.arg("color");
-  int r=hexToDec(col.substring(0,2));
-  int g=hexToDec(col.substring(2,4));
-  int b=hexToDec(col.substring(4,6));
-  ws2812.oneColor(r,g,b,0,103,0);
-  //--Envía respuesta al cliente
-  web_server.send ( 200, "text/html", "OK" );
-}
-
-void handle_setfixcolor(void){
-  //--Extrae el argumento de la querystring
-  String fixcolor=web_server.arg("fixcolor");
-  //--Determina que botón se pulsó
-  if (fixcolor=="11"){
-    //--Actúa sobre el hardware enciende calido
-    ws2812.oneColor(220,93,19,0,103,0);
-  }
-  if (fixcolor=="12"){
-    //--Actúa sobre el hardware apaga natural
-    ws2812.oneColor(189,111,81,0,103,0);
-  }
-  if (fixcolor=="13"){
-    //--Actúa sobre el hardware enciende blanco
-    ws2812.oneColor(255,255,255,0,103,0);
-  }
-  if (fixcolor=="10"){
-    //--Actúa sobre el hardware apaga
-    ws2812.off();
-  }
-  
-  //--Envía respuesta al cliente
-  web_server.send ( 200, "text/html", "OK" );
-}*/
-
 void handleUpdateSettings(){
-  bool res;
+  //bool res;
   String body;
-  String rq_reset=web_server.arg("reset");
+  //String rq_reset=web_server.arg("reset");
   //Serial.print(rq_reset);
   
-  res = write_StringEE(0, web_server.arg("device"));
-  check_error_updating(res);
-  device=read_StringEE(0,25);
+  device=web_server.arg("device");
+  mqtt_server=web_server.arg("mqtt_server");
+  mqtt_tcp_str=web_server.arg("mqtt_tcp_str");
+  passwd_AP=web_server.arg("passwd_AP");
+  ssid=web_server.arg("ssid");
+  ssid_pass=web_server.arg("ssid_pass");
+  ubicacion=web_server.arg("ubic");
+  area=web_server.arg("area");
 
-  res = write_StringEE(30, web_server.arg("mqtt_server"));
-  check_error_updating(res);
-  mqtt_server=read_StringEE(30,25);
+  write_vars();
 
-  res = write_StringEE(60, web_server.arg("mqtt_tcp_str"));
-  check_error_updating(res);
-  mqtt_tcp_str=read_StringEE(180,25); 
 
-  res = write_StringEE(90, web_server.arg("passwd_AP"));
+/*
+  res = write_StringEE(device_eeprom_pos, web_server.arg("device"));
   check_error_updating(res);
-  passwd_AP=read_StringEE(90,25); 
+  device=read_StringEE(device_eeprom_pos,25);
 
-  res = write_StringEE(120, web_server.arg("ssid"));
+  res = write_StringEE(mqtt_server_eeprom_pos, web_server.arg("mqtt_server"));
   check_error_updating(res);
-  ssid=read_StringEE(120,25); 
+  mqtt_server=read_StringEE(mqtt_server_eeprom_pos,25);
 
-  res = write_StringEE(150, web_server.arg("ssid_pass"));
+  res = write_StringEE(mqtt_tcp_str_eeprom_pos, web_server.arg("mqtt_tcp_str"));
   check_error_updating(res);
-  ssid_pass=read_StringEE(150,25); 
+  mqtt_tcp_str=read_StringEE(mqtt_tcp_str_eeprom_pos,25); 
 
-  res = write_StringEE(180, web_server.arg("ubic"));
+  res = write_StringEE(passwd_AP_eeprom_pos, web_server.arg("passwd_AP"));
   check_error_updating(res);
-  ubicacion=read_StringEE(180,25);  
+  passwd_AP=read_StringEE(passwd_AP_eeprom_pos,25); 
+
+  res = write_StringEE(ssid_eeprom_pos, web_server.arg("ssid"));
+  check_error_updating(res);
+  ssid=read_StringEE(ssid_eeprom_pos,25); 
+
+  res = write_StringEE(ssid_pass_eeprom_pos, web_server.arg("ssid_pass"));
+  check_error_updating(res);
+  ssid_pass=read_StringEE(ssid_pass_eeprom_pos,25); 
+
+  res = write_StringEE(ubicacion_eeprom_pos, web_server.arg("ubic"));
+  check_error_updating(res);
+  ubicacion=read_StringEE(ubicacion_eeprom_pos,25);  
+
+  res = write_StringEE(area_eeprom_pos, web_server.arg("area"));
+  check_error_updating(res);
+  area=read_StringEE(area_eeprom_pos,25); 
+
   noInterrupts();
   EEPROM.commit();
-  interrupts();
+  interrupts();*/
   //Envia OK sin reset
     body="<body>\
      <div class='panel panel-primary bg-2'>\

@@ -3,7 +3,6 @@
 
 #include <Arduino.h>
 
-void temp_inst(void);
-void temp_promedio(void);
+
 
 #endif

@@ -61,7 +61,7 @@ void MCC_mqtt::init(const char * server, uint16_t port_server, const char * devi
         Serial.println("Certificado cargado");
     else
         Serial.println("Certificado NO cargado");
-    //wifi_client.loadCertificate(cert);
+
     mqtt.setServer(_server, _port_server);
 }
 
@@ -85,22 +85,6 @@ bool MCC_mqtt::conn(void){
     _flag_mqtt=false;
     mqtt_conn_timeout=0;
 
-/*
-      if (!mqtt.connected()) {
-        if (mqtt.connect(_device,_device,"")) {
-            Serial.println("===> mqtt conectado");
-            mqtt.subscribe("v1/devices/me/rpc/request/+");
-            mqtt.subscribe("v1/devices/me/attributes");
-            _flag_mqtt=true;
-        } 
-        else{
-            Serial.print("---> mqtt fallo, rc=");
-            Serial.println(mqtt.state());
-            _flag_mqtt=false;
-        }
-      }*/
-
-
     while (!mqtt.connected()) {
         Serial.print("Intentando conexión a Broker MQTT ");
         Serial.print(_server);
@@ -113,13 +97,13 @@ bool MCC_mqtt::conn(void){
         _conn_mqtt_status=mqtt.connect(_device,_device,""); 
         _mqtt_conn_retrys++;
         delay(5000);
-        Serial.println(_conn_mqtt_status);
+        //Serial.println(_conn_mqtt_status);
         delay(1000);
         if (_conn_mqtt_status) {
             _flag_mqtt=true;
             Serial.println("Conectado a MQTT");
             this->sub(_topic_sub);
-            this->pub(_topic_status,"up");
+            //this->pub(_topic_status,"up");
             return _flag_mqtt;
             //break;
         }

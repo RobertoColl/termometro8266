@@ -8,7 +8,18 @@ extern String passwd_AP;
 extern String ssid;
 extern String ssid_pass;
 extern String ubicacion;
+extern String area;
 extern String tipo_device;
+extern String fuota_server;
+extern uint32_t device_eeprom_pos;
+extern uint32_t mqtt_server_eeprom_pos;
+extern uint32_t mqtt_tcp_str_eeprom_pos;
+extern uint32_t passwd_AP_eeprom_pos;
+extern uint32_t ssid_eeprom_pos;
+extern uint32_t ssid_passwd_eeprom_pos;
+extern uint32_t ubicacion_eeprom_pos;
+extern uint32_t fuota_eeprom_pos;
+extern uint32_t area_eeprom_pos;
 
 
 //--Muestra los archivos en el FS
@@ -48,29 +59,79 @@ void factory_reset(void){
   write_StringEE(120, ssid);
   write_StringEE(150, ssid_pass);
   write_StringEE(180, ubicacion);
+  write_StringEE(210, fuota_server);
+  write_StringEE(240, area);
+
   noInterrupts();
   EEPROM.commit();
   interrupts();
 }
 
-void read_vars(void){
-  device=read_StringEE(0,25);
-  mqtt_server=read_StringEE(30,25);
-  mqtt_tcp_str=read_StringEE(60,25);
-  passwd_AP=read_StringEE(90,25);
-  ssid=read_StringEE(120,25); 
-  ssid_pass=read_StringEE(150,25); 
-  ubicacion=read_StringEE(180,25); 
+void read_vars(bool ver){
+  device=read_StringEE(device_eeprom_pos, 25);
+  mqtt_server=read_StringEE(mqtt_server_eeprom_pos, 25);
+  mqtt_tcp_str=read_StringEE(mqtt_tcp_str_eeprom_pos, 25);
+  passwd_AP=read_StringEE(passwd_AP_eeprom_pos, 25);
+  ssid=read_StringEE(ssid_eeprom_pos, 25); 
+  ssid_pass=read_StringEE(ssid_passwd_eeprom_pos, 25); 
+  ubicacion=read_StringEE(ubicacion_eeprom_pos, 25); 
+  fuota_server=read_StringEE(fuota_eeprom_pos, 25);
+  area=read_StringEE(area_eeprom_pos,25);
   mqtt_tcp=mqtt_tcp_str.toInt();
-  Serial.println("");
-  Serial.print("Nombre:");Serial.println(device);
-  Serial.print("Broker:");Serial.println(mqtt_server);
-  Serial.print("Puerto mqtt:");Serial.println(mqtt_tcp);
-  Serial.print("Passwd AP:");Serial.println(passwd_AP);
-  Serial.print("SSID:");Serial.println(ssid);
-  Serial.print("Passwd SSID:");Serial.println(ssid_pass);
-  Serial.print("Ubicacion:");Serial.println(ubicacion);
+  if(ver){
+    Serial.println("");
+    Serial.print("Nombre:");Serial.println(device);
+    Serial.print("Broker:");Serial.println(mqtt_server);
+    Serial.print("FUOTA:");Serial.println(fuota_server);
+    Serial.print("Puerto mqtt:");Serial.println(mqtt_tcp);
+    Serial.print("Passwd AP:");Serial.println(passwd_AP);
+    Serial.print("SSID:");Serial.println(ssid);
+    Serial.print("Passwd SSID:");Serial.println(ssid_pass);
+    Serial.print("Ubicacion:");Serial.println(ubicacion);
+    Serial.print("Area:");Serial.println(area);
+  }
 }
+
+void write_vars(void){
+  bool res;
+
+  res = write_StringEE(device_eeprom_pos, device);
+  check_error_updating(res);
+  device=read_StringEE(device_eeprom_pos,25);
+
+  res = write_StringEE(mqtt_server_eeprom_pos, mqtt_server);
+  check_error_updating(res);
+  mqtt_server=read_StringEE(mqtt_server_eeprom_pos,25);
+
+  res = write_StringEE(mqtt_tcp_str_eeprom_pos, mqtt_tcp_str);
+  check_error_updating(res);
+  mqtt_tcp_str=read_StringEE(mqtt_tcp_str_eeprom_pos,25); 
+
+  res = write_StringEE(passwd_AP_eeprom_pos, passwd_AP);
+  check_error_updating(res);
+  passwd_AP=read_StringEE(passwd_AP_eeprom_pos,25); 
+
+  res = write_StringEE(ssid_eeprom_pos, ssid);
+  check_error_updating(res);
+  ssid=read_StringEE(ssid_eeprom_pos,25); 
+
+  res = write_StringEE(ssid_passwd_eeprom_pos, ssid_pass);
+  check_error_updating(res);
+  ssid_pass=read_StringEE(ssid_passwd_eeprom_pos,25); 
+
+  res = write_StringEE(ubicacion_eeprom_pos, ubicacion);
+  check_error_updating(res);
+  ubicacion=read_StringEE(ubicacion_eeprom_pos,25);  
+
+  res = write_StringEE(area_eeprom_pos, area);
+  check_error_updating(res);
+  area=read_StringEE(area_eeprom_pos,25); 
+
+  noInterrupts();
+  EEPROM.commit();
+  interrupts();
+}
+
 
 unsigned int hexToDec(String hexString) {
   
@@ -103,7 +164,7 @@ void check_update(void){
     EEPROM.commit();
     interrupts();
     Serial.println("Actualizando.....");
-    t_httpUpdate_return ret=ESPhttpUpdate.update("http://192.168.1.17/updates/"+tipo_device+"/"+version+"/firmware.bin");
+    t_httpUpdate_return ret=ESPhttpUpdate.update("http://"+fuota_server+"/updates/"+tipo_device+"/"+version+"/firmware.bin");
     switch(ret) {
       case HTTP_UPDATE_FAILED:
         Serial.printf("[update] Update FAILED (%d): %s\r\n", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());

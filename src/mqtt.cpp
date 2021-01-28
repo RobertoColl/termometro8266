@@ -170,7 +170,31 @@ bool MCC_mqtt::loop(void){
  * @param message 
  */
 bool MCC_mqtt::pub(String topic, String message){
-    if (mqtt.connected()) {
+    if (!mqtt.connected()){
+        if (this->conn()){
+            if (mqtt.publish(topic.c_str(),message.c_str())){
+                this->shortBlinkMqttLed();
+                return true;
+            }
+            else{
+                Serial.println("Falló la publicación");
+                return false;
+            }
+        }
+        Serial.println("Falló la publicación. No se pudo conectar al broker");
+        return false;
+    }
+    else{
+        if (mqtt.publish(topic.c_str(),message.c_str())){
+            this->shortBlinkMqttLed();
+            return true;
+        }else{
+            Serial.println("Falló la publicación");
+           return false;
+        }
+    }
+
+    /*if (mqtt.connected()) {
         if (mqtt.publish(topic.c_str(),message.c_str())){
             this->shortBlinkMqttLed();
             return true;
@@ -181,7 +205,7 @@ bool MCC_mqtt::pub(String topic, String message){
     }else{
         this->conn();
     }
-    return false;
+    return false;*/
 }
 
 /**

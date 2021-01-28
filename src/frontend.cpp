@@ -140,8 +140,10 @@ void handle_root() {
          xhttp.onreadystatechange = function(){\
           if (this.readyState == 4 && this.status == 200){\
            state=this.responseText.split(',');\
-           if (state[0]=='1'){ document.getElementById('bt1_state').innerHTML='Llamado!';}\
-           if (state[0]=='0'){document.getElementById('bt1_state').innerHTML='Inactivo';}\
+           if (state[0]=='1'){document.getElementById('stc1').innerHTML='Encendido';}\
+           if (state[0]=='0'){document.getElementById('stc1').innerHTML='Apagado';}\
+           if (state[1]=='1'){document.getElementById('stc2').innerHTML='Encendido';}\
+           if (state[1]=='0'){document.getElementById('stc2').innerHTML='Apagado';}\
           }\
          };\
          xhttp.open('GET', 'refresh', true);\
@@ -164,52 +166,55 @@ void handle_estado() {
    $(document).ready(function() {\
    refresh();\
    });\
-   function color_picker(){\
-    var xhttp = new XMLHttpRequest();\
-    ch=document.getElementById('color_p').value;\
-    ch=ch.split('#')[1];\
-    console.log(ch);\
-    xhttp.open('GET', 'setcolor?color='+ch, true);\
-    xhttp.send();\
-   }\
    function onchangech(ch){\
     var xhttp = new XMLHttpRequest();\
     xhttp.onreadystatechange = function(){\
      if (this.readyState == 4 && this.status == 200){\
       if(ch=='11'){\
-       document.getElementById('calido').innerHTML = 'Encendido!';\
-       document.getElementById('natural').innerHTML = 'Natural';\
-       document.getElementById('blanco').innerHTML = 'Blanco';\
-      }\
-     if(ch=='12'){\
-       document.getElementById('calido').innerHTML = 'Cálido';\
-       document.getElementById('natural').innerHTML = 'Encendido!';\
-       document.getElementById('blanco').innerHTML = 'Blanco';\
-      }\
-     if(ch=='13'){\
-       document.getElementById('calido').innerHTML = 'Cálido';\
-       document.getElementById('natural').innerHTML = 'Natural';\
-       document.getElementById('blanco').innerHTML = 'Encendido!';\
+       document.getElementById('stc1').innerHTML = 'Encendido';\
       }\
      if(ch=='10'){\
-       document.getElementById('calido').innerHTML = 'Cálido';\
-       document.getElementById('natural').innerHTML = 'Natural';\
-       document.getElementById('blanco').innerHTML = 'Blanco';\
+       document.getElementById('stc1').innerHTML = 'Apagado';\
+      }\
+     if(ch=='21'){\
+       document.getElementById('stc2').innerHTML = 'Encendido';\
+      }\
+     if(ch=='20'){\
+       document.getElementById('stc2').innerHTML = 'Apagado';\
       }\
      }\
     };\
-    xhttp.open('GET', 'setfixcolor?fixcolor='+ch, true);\
+    xhttp.open('GET', 'canal?accion='+ch, true);\
     xhttp.send(); \
     }\
   </script>\
  </head>\
  <body><br><br>\
   <div class='panel panel-primary bg-2' id='home'>\
-   <div class='panel-heading'>" + device + " " + ubicacion + "</div>\
+   <div class='panel-heading'>" + ubicacion + "  >  " + device + "</div>\
    <div class='panel-body'>\
     <form>\
      <div class='well'><h2 class='text-center'>Estado</h2>\
-     <label for='mod'>Valores instantáneos medidos </label>\
+      <label for='mod'>Valores instantáneos medidos</label><p>\
+      Temperatura\
+      <span class='text-primary' id='ti'>20 ºC</span><p>\
+      Humedad\
+      <span class='text-primary' id='hi'>50 %</span><p>\
+      Nivel\
+      <span class='text-primary' id='ni'>12 m</span><p>\
+      <label for='mod'>Canales</label><p>\
+      Canal 1\
+      <span class='text-primary' id='stc1'></span><p>\
+      Canal 2\
+      <span class='text-primary' id='stc2'></span><p>\
+     </div>\
+     <div class='well'><h2 class='text-center'>Canal 1</h2>\
+      <button type='button' class='btn btn-success btn-lg btn-block' name='c11' id='c11' value='1' onclick='onchangech(11)'>Enciende</button>\
+      <button type='button' class='btn btn-danger btn-lg btn-block' name='c10' id='c10' value='0' onclick='onchangech(10)'>Apaga</button>\
+     </div>\
+     <div class='well'><h2 class='text-center'>Canal 2</h2>\
+      <button type='button' class='btn btn-success btn-lg btn-block' name='c21' id='c21' value='1' onclick='onchangech(21)'>Enciende</button>\
+      <button type='button' class='btn btn-danger btn-lg btn-block' name='c20' id='c20' value='0' onclick='onchangech(20)'>Apaga</button>\
      </div>\
     </form>\
    </div>\

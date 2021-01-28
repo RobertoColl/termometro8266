@@ -36,7 +36,7 @@
 #define LED_PULSO                14    // led de pulso
 #define LED_WIFI                 2
 #define LED_RANGO                16
-
+#define FRESET                   14    // pin para factory reset
 /*===================[Definiciones de software]===============================*/
 #define SERIAL_BAUDRATE          19200
 #define PORT_WEB_SERVER          80
@@ -91,6 +91,9 @@ uint8_t flag_wifi=0;
 uint8_t flag_mqtt_conn=0;
 uint8_t flag_wifi_conn=0;
 uint8_t flag_publica=0;
+uint8_t canal1=CANAL1;
+uint8_t canal2=CANAL2;
+
 
 //-- Versiones
 String fversion="2.0.0";          
@@ -121,12 +124,11 @@ void setup() {
   LittleFS.begin();
 
   //--Factory reset
-  //pinMode(LED_PULSO,INPUT);
-  /*if (!digitalRead(LED_PULSO)){
+  pinMode(FRESET,INPUT);
+  if (digitalRead(FRESET)){
     Serial.println("\r\nFactory reset!!");
     factory_reset();
-  }*/
-  //factory_reset();
+  }
   read_vars(1);  
   
 

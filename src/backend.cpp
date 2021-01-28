@@ -18,6 +18,8 @@ extern String area;
 extern String ssid;
 extern String ssid_pass;
 extern String header;
+extern uint8_t flag_canal1;
+extern uint8_t flag_canal2;
 /*extern uint32_t device_eeprom_pos;
 extern uint32_t mqtt_server_eeprom_pos;
 extern uint32_t mqtt_tcp_str_eeprom_pos;
@@ -50,6 +52,7 @@ void init_webserver(void){
   //web_server.on ("/setcolor",HTTP_GET,handle_setcolor);
   web_server.on ("/refresh",HTTP_GET, handle_refresh);
   web_server.on ("/update_settings", HTTP_POST, handleUpdateSettings);
+  web_server.on("/canal",HTTP_GET,handle_canal);
   //--Inicia webserver
   web_server.begin();
 }
@@ -144,9 +147,29 @@ void handle_refresh(){
   String estados;
   auth();
   //estados+="</td></tr>";
-  //estados=String(flag_panico1)+","+String(flag_panico2);
+  estados=String(flag_canal1)+","+String(flag_canal2);
   
   web_server.send(200,"text/html",estados);
+}
+
+void handle_canal(void){
+   int accion=web_server.arg("accion").toInt();
+   switch (accion){
+      case 11:
+         canal1_on();
+         break;
+      case 10:
+         canal1_off();
+         break;
+      case 21:
+         canal2_on();
+         break;
+      case 20:
+         canal2_off();
+         break;
+   }
+   //--Envía respuesta al cliente
+   web_server.send ( 200, "text/html", "OK" );
 }
 
 //-- Archivos servidos

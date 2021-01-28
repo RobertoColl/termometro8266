@@ -27,6 +27,8 @@ extern uint32_t ssid_pass_eeprom_pos;
 extern uint32_t ubicacion_eeprom_pos;
 extern uint32_t fuota_eeprom_pos;
 extern uint32_t area_eeprom_pos;
+extern uint8_t canal1;
+extern uint8_t canal2;
 
 
 //--Variables locales
@@ -41,6 +43,8 @@ String comando;
 int ind1;
 StaticJsonDocument<200> out;
 char json_out[200];
+uint8_t flag_canal1=0;
+uint8_t flag_canal2=0;
 
 
 void rpc_proc(char* topic, byte* payload, unsigned int length){
@@ -84,6 +88,9 @@ void rpc_proc(char* topic, byte* payload, unsigned int length){
     if (comando=="?"){
         rpc_help();
     }
+    else if (comando=="read"){
+        rpc_read();
+    }
     else if (comando=="update"){
         rpc_update(parametro);
     }
@@ -99,6 +106,9 @@ void rpc_proc(char* topic, byte* payload, unsigned int length){
     else if(comando=="set"){
         rpc_set(parametro,valor);
     }
+    else{
+        rpc_unknown(comando);
+    }
 }
 
 void send_rpc_rta(void){
@@ -108,7 +118,12 @@ void send_rpc_rta(void){
 
 //------------------------------Comandos RPC----------------------------------------
 void rpc_help(void){
-    out["comandos"]="read, state, param, set 'parametro valor', on 'par', off 'par'";
+    out["comandos"]="read, param, set, update, reset, ver";
+    send_rpc_rta();
+}
+
+void rpc_read(void){
+    out["Valor"]=0;
     send_rpc_rta();
 }
 
@@ -167,8 +182,9 @@ void rpc_param(String parametro){
     send_rpc_rta();
 }
 
-//--Cambia las variables de EEPROM
+//--Comandos set
 void rpc_set(String parametro,String valor){
+    //--Cambia las variables de EEPROM
     if (parametro=="ssid"){
         ssid=valor;
         //write_StringEE(ssid_eeprom_pos, valor);
@@ -209,10 +225,35 @@ void rpc_set(String parametro,String valor){
         //write_StringEE(area_eeprom_pos, valor);
         out["Area"]=valor;
     }
+    //Cambia estado de canales
+    else if (parametro=="canal1"){
+        if (valor=="1"){
+            canal1_on();
+            out["Canal 1"]="Encendido";
+            
+        }
+        else if (valor=="0"){
+            canal1_off();
+            out["Canal 1"]="Apagado";
+        }
+    }
+    else if (parametro=="canal2"){
+        if (valor=="1"){
+            canal2_on();
+            out["Canal 2"]="Encendido";
+        }
+        else if (valor=="0"){
+            canal2_off();
+            out["Canal 2"]="Apagado";
+        }
+    }
     write_vars();
     read_vars(0);
     send_rpc_rta();
+}
 
-
+void rpc_unknown(String comando){
+    out["Desconocido"]=comando;
+    send_rpc_rta();
 }
 

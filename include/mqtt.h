@@ -12,23 +12,27 @@
 #define WILL_RETAIN_MESSAGE                 false
 #define WILL_QOS                            2
 //#define MAX_MQTT_CONNECTION_TIMEOUT         50          //timeout en milisegundos*200 para la conexion mqtt
-#define MAX_MQTT_CONNECTION_RETRYS          20          //cantidad de reintentos de conexion mqtt
-#define MAX_MQTT_LIVE_TIMEOUT               300000      //timeout en milisegundos de desaparicion de mqtt 
+#define MAX_MQTT_CONNECTION_RETRYS          5             //cantidad de reintentos de conexion mqtt
+#define MAX_MQTT_LIVE_TIMEOUT               300000        //timeout en milisegundos de desaparicion de mqtt 
+#define MAX_MQTT_WAIT_STATE                 3             //minutos de espera de reintento de conexion al broker
 #define SHORT_DELAY_MQTT_LED                50
+#define MQTT_DISCONNECTED_STATE             0             //valores para _flag_mqtt
+#define MQTT_CONNECTED_STATE                1
+#define MQTT_MAX_RETRY_STATE                2
+#define MQTT_WAIT_STATE                     3
+
 
 
 class MCC_mqtt{
     private:
-        //int MAX_mqtt_conn_timeout=50;               //timeout en milisegundos*200 para la conexion mqtt
-        //unsigned long MAX_live_timeout_mqtt=300000; //timeout en milisegundos de desaparicion de mqtt
-        int mqtt_conn_timeout=0;                    //timeout de la conexion a mqtt en segundos
-        unsigned long live_timeout_mqtt;            //timeout de la conexion en funcionamiento de mqtt en minutos
+        int mqtt_conn_timeout=0;                    //contador timeout de la conexion a mqtt en segundos
+        unsigned long live_timeout_mqtt;            //contador timeout de la conexion en funcionamiento de mqtt en minutos
         const char * _server;
         uint16_t _port_server;
         const char * _device;
         const char * _topic_status;
         const char * _will_mess;
-        bool _flag_mqtt;
+        uint8_t _flag_mqtt;                         
         bool _conn_mqtt_status;
         const char * _topic_sub;
         int _led;
@@ -45,5 +49,8 @@ class MCC_mqtt{
         bool control(void);
         void setOnMess(std::function<void (char *, uint8_t *, unsigned int)> callb);
         void shortBlinkMqttLed();
+
+        uint8_t mqtt_wait;
+        
 };
 #endif

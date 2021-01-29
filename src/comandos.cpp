@@ -48,12 +48,12 @@ uint8_t flag_canal2=0;
 
 
 void rpc_proc(char* topic, byte* payload, unsigned int length){
-    //Serial.println("Comando!");
     payload[length] = '\0';
     topic_rpc_req = String((char*)topic);
     msg_rpc_req = String((char*)payload);
     topic_rpc_rta="v1/devices/me/rpc/response/"+topic_rpc_req.substring(26);
     broker.shortBlinkMqttLed();
+    //--Debug
     Serial.print("Topico de pregunta:");Serial.println(topic_rpc_req);
     Serial.print("Mensaje de pregunta:");Serial.println(msg_rpc_req);
     Serial.print("Topico de respuesta:");Serial.println(topic_rpc_rta);
@@ -92,7 +92,12 @@ void rpc_proc(char* topic, byte* payload, unsigned int length){
         rpc_read();
     }
     else if (comando=="update"){
-        rpc_update(parametro);
+        if (parametro==""){
+            rpc_update();
+        }
+        else{
+            rpc_update(parametro);
+        }
     }
     else if (comando=="reset"){
         ESP.reset();
@@ -143,8 +148,9 @@ void rpc_update(String version){
 }
 
 void rpc_update(void){
-    //TODO: ver la version
-    //write_StringEE(470,version);
+    Serial.print("sin param->");
+    Serial.println("V"+fversion);
+    write_StringEE(470,"V"+fversion);
     write_StringEE(500, "1");
     noInterrupts();
     EEPROM.commit();

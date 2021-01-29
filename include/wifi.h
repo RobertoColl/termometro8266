@@ -12,6 +12,10 @@
 using namespace axTLS;
 //------------------------------------------------------------------------------
 
+/*======================================[macros y definiciones]============================================*/
+#define MAX_WIFI_CONN_TIMEOUT              50            //timeout en milisegundos*200 para la conexion wifi
+#define MAX_WIFI_LIVE_TIMEOUT              300000        //timeout en milisegundos de desaparicion de wifi
+
 
 class MCC_wifi{
     private:    
@@ -21,8 +25,8 @@ class MCC_wifi{
         String _ssid;
         String _ssid_pass;
         int _led;
-        int MAX_wifi_conn_timeout=50;               //timeout en milisegundos*200 para la conexion wifi
-        unsigned long MAX_live_timeout_wifi=300000; //timeout en milisegundos de desaparicion de wifi
+        //int MAX_wifi_conn_timeout=50;               //timeout en milisegundos*200 para la conexion wifi
+        //unsigned long MAX_live_timeout_wifi=300000; //timeout en milisegundos de desaparicion de wifi
         int wifi_conn_timeout=0;                    //timeout de la conexion a wifi en segundos
         unsigned long live_timeout_wifi;            //timeout de la conexion en funcionamiento de wifi en minutos
         

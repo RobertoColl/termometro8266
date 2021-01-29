@@ -54,7 +54,7 @@ uint8_t MCC_wifi::conn(void){
       wifi_conn_timeout++;
       delay(200);
       Serial.print(".");
-      if (wifi_conn_timeout>=MAX_wifi_conn_timeout){
+      if (wifi_conn_timeout>=MAX_WIFI_CONN_TIMEOUT){
          WiFi.mode(WIFI_AP);  //--Necesario para la configuración cuando no se conecta a wifi
          Serial.print("\r\nTimeout. Falló conexióm WiFi, pasa a modo AP");
          return 0;
@@ -73,7 +73,7 @@ uint8_t MCC_wifi::conn(void){
 
 /**
  * @brief Controla la conexión a wifi. Si la desconexión perdura por un 
- *        tiempo superior a MAX_live_timeout_wifi (definido en wifi.h), 
+ *        tiempo superior a MAX_WIFI_LIVE_TIMEOUT (definido en wifi.h), 
  *        resetea el microcontrolador.
  * 
  * @return int 
@@ -81,19 +81,20 @@ uint8_t MCC_wifi::conn(void){
  */
 int MCC_wifi::control(void){
    if (!WiFi.status()==3){
-      live_timeout_wifi=millis();
-      return 0;
+      if (live_timeout_wifi - millis() <= MAX_WIFI_LIVE_TIMEOUT) {
+         Serial.println("########################");
+         Serial.println("Reset por WIFI Timeout");
+         Serial.println("########################");
+         ESP.reset(); 
+      }
+      else{
+         return false;
+      }
    }
-   //Serial.println(live_timeout_wifi - millis());
-   //Serial.println(MAX_live_timeout_wifi);
-   if (live_timeout_wifi - millis() <= MAX_live_timeout_wifi) {
-      Serial.println("########################");
-      Serial.println("Reset por WIFI Timeout");
-      Serial.println("########################");
-      ESP.reset(); 
-   }
-   return 1;
+   live_timeout_wifi=millis();
+   return true;
 }
+
 
 /**
  * @brief Blink del led de wifi según el estado de la conexión

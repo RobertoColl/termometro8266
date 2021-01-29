@@ -3,6 +3,8 @@
 
 #include <Arduino.h>
 
+//--Prototipos
+void medicion(void);
 
 
 #endif

@@ -6,3 +6,8 @@
 
 //--Variables locales
 
+
+//--Prototipos
+void medicion(void){
+
+}

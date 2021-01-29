@@ -82,7 +82,7 @@ void MCC_mqtt::setOnMess(std::function<void (char *, uint8_t *, unsigned int)> c
  *        Devuelve el resultado de la conexión: true conexion exitosa, false no se pudo realizar la conexión.
  */
 bool MCC_mqtt::conn(void){
-    _flag_mqtt=false;
+    _flag_mqtt=MQTT_DISCONNECTED_STATE;
     mqtt_conn_timeout=0;
 
     while (!mqtt.connected()) {
@@ -96,11 +96,12 @@ bool MCC_mqtt::conn(void){
         //_conn_mqtt_status=mqtt.connect(_device,_topic_status,WILL_QOS, WILL_RETAIN_MESSAGE, _will_mess); 
         _conn_mqtt_status=mqtt.connect(_device,_device,""); 
         _mqtt_conn_retrys++;
-        delay(5000);
+        //delay(5000);
         //Serial.println(_conn_mqtt_status);
-        delay(1000);
+        delay(100);
         if (_conn_mqtt_status) {
-            _flag_mqtt=true;
+            _flag_mqtt=MQTT_CONNECTED_STATE;
+            _mqtt_conn_retrys=0;
             Serial.println("Conectado a MQTT");
             this->sub(_topic_sub);
             //this->pub(_topic_status,"up");
@@ -110,7 +111,8 @@ bool MCC_mqtt::conn(void){
         delay(300);
         Serial.print("Reintento:");Serial.println(_mqtt_conn_retrys);
         if (_mqtt_conn_retrys>=MAX_MQTT_CONNECTION_RETRYS){
-            _flag_mqtt=false;
+            _flag_mqtt=MQTT_MAX_RETRY_STATE;
+            _mqtt_conn_retrys=0;
             Serial.print("MAX Retrys. Falló conexióm MQTT, rc=");
             Serial.println(mqtt.state());
             return _flag_mqtt;
@@ -150,6 +152,20 @@ bool MCC_mqtt::sub(String topic){
  */
 bool MCC_mqtt::loop(void){
     if (!mqtt.connected()){
+        if (_flag_mqtt==MQTT_MAX_RETRY_STATE){
+            _flag_mqtt=MQTT_WAIT_STATE;
+            mqtt_wait=0;
+            return false;
+        }
+        if (_flag_mqtt==MQTT_WAIT_STATE){
+            if (mqtt_wait>=MAX_MQTT_WAIT_STATE){
+                _flag_mqtt=MQTT_DISCONNECTED_STATE;
+                return false;
+            }
+            else{
+                return false;
+            }
+        }
         if (this->conn()){
             mqtt.loop();
             return true;
@@ -217,16 +233,19 @@ bool MCC_mqtt::pub(String topic, String message){
  *        Devuelve el estado de la conexión: 1 conectado, 0 no conectado
  */
 bool MCC_mqtt::control(void){
-    if (!mqtt.connected()){
-         live_timeout_mqtt=millis();
-      return false;
+    if (!mqtt.connected()){   
+        Serial.println(live_timeout_mqtt - millis());
+        if (live_timeout_mqtt - millis() <= MAX_MQTT_LIVE_TIMEOUT) {   
+            Serial.println("########################");
+            Serial.println("Reset por MQTT Timeout");
+            Serial.println("########################");
+            ESP.reset(); 
+        }
+        else{
+            return false;
+        }
     }
-    if (live_timeout_mqtt - millis() <= MAX_MQTT_LIVE_TIMEOUT) {
-        Serial.println("########################");
-        Serial.println("Reset por MQTT Timeout");
-        Serial.println("########################");
-        ESP.reset(); 
-    }
+    live_timeout_mqtt=millis();
     return true;
 }
 

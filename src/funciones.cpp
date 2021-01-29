@@ -155,10 +155,10 @@ unsigned int hexToDec(String hexString) {
 
 void check_update(void){
   String flag_update=read_StringEE(500,1);
-  String version=read_StringEE(470,25);
-  Serial.print("Se actualizará a la version:");
-  Serial.println(version);
   if(flag_update=="1"){
+    String version=read_StringEE(470,25);
+    Serial.print("Se actualizará a la version:");
+    Serial.println(version);
     write_StringEE(500, "0");
     noInterrupts();
     EEPROM.commit();
@@ -177,4 +177,8 @@ void check_update(void){
         break;
     }
   }
+}
+
+void publica_medicion(void){
+
 }

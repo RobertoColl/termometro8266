@@ -194,27 +194,37 @@ void handle_estado() {
    <div class='panel-heading'>" + ubicacion + "  >  " + device + "</div>\
    <div class='panel-body'>\
     <form>\
-     <div class='well'><h2 class='text-center'>Estado</h2>\
-      <label for='mod'>Valores instantáneos medidos</label><p>\
+     <div class='well'><h2 class='text-center'>Mediciones</h2><p>\
+      <label for='vi'>Valores instantáneos</label><p>\
       Temperatura\
       <span class='text-primary' id='ti'>20 ºC</span><p>\
       Humedad\
       <span class='text-primary' id='hi'>50 %</span><p>\
       Nivel\
       <span class='text-primary' id='ni'>12 m</span><p>\
-      <label for='mod'>Canales</label><p>\
+      <label for='vp'>Valores Promedio</label><p>\
+      Temperatura\
+      <span class='text-primary' id='tp'>20 ºC</span><p>\
+      Humedad\
+      <span class='text-primary' id='hp'>50 %</span><p>\
+      Nivel\
+      <span class='text-primary' id='np'>12 m</span><p>\
+     </div>\
+     <div class='well'><h2 class='text-center'>Estado canales</h2><p>\
       Canal 1\
       <span class='text-primary' id='stc1'></span><p>\
       Canal 2\
       <span class='text-primary' id='stc2'></span><p>\
      </div>\
-     <div class='well'><h2 class='text-center'>Canal 1</h2>\
-      <button type='button' class='btn btn-success btn-lg btn-block' name='c11' id='c11' value='1' onclick='onchangech(11)'>Enciende</button>\
-      <button type='button' class='btn btn-danger btn-lg btn-block' name='c10' id='c10' value='0' onclick='onchangech(10)'>Apaga</button>\
-     </div>\
-     <div class='well'><h2 class='text-center'>Canal 2</h2>\
-      <button type='button' class='btn btn-success btn-lg btn-block' name='c21' id='c21' value='1' onclick='onchangech(21)'>Enciende</button>\
-      <button type='button' class='btn btn-danger btn-lg btn-block' name='c20' id='c20' value='0' onclick='onchangech(20)'>Apaga</button>\
+     <div class='well'><h2 class='text-center'>Actuación</h2><p>\
+      <label for='c1'>Canal 1</label><p>\
+       <button type='button' class='btn btn-success btn-lg btn-block' name='c11' id='c11' value='1' onclick='onchangech(11)'>Enciende</button>\
+       <button type='button' class='btn btn-danger btn-lg btn-block' name='c10' id='c10' value='0' onclick='onchangech(10)'>Apaga</button>\
+       <p>\
+      <label for='c2'>Canal 2</label><p>\
+       <button type='button' class='btn btn-success btn-lg btn-block' name='c21' id='c21' value='1' onclick='onchangech(21)'>Enciende</button>\
+       <button type='button' class='btn btn-danger btn-lg btn-block' name='c20' id='c20' value='0' onclick='onchangech(20)'>Apaga</button>\
+       <p>\
      </div>\
     </form>\
    </div>\

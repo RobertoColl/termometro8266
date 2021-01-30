@@ -1,5 +1,6 @@
 #include "interrupciones.h"
 
+//--Objetos externos
 extern MCC_mqtt broker;
 
 //--Variables extenas
@@ -7,9 +8,7 @@ extern uint8_t flag_seg;
 extern uint8_t mqtt_conn_timeout;
 extern uint8_t wifi_conn_timeout;
 extern uint8_t mqtt_wait;
-//extern unsigned long live_timeout_mqtt;
-
-
+extern uint8_t live_timeout_mqtt;
 
 //--Variables locales
 uint8_t seg=0;
@@ -28,6 +27,7 @@ void timer0_ISR (void) {
     seg=0;
     minu++;
     broker.mqtt_wait++;
+    broker.live_timeout_mqtt++;
   
   }
 

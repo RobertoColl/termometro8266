@@ -12,8 +12,8 @@
 #define WILL_RETAIN_MESSAGE                 false
 #define WILL_QOS                            2
 //#define MAX_MQTT_CONNECTION_TIMEOUT         50          //timeout en milisegundos*200 para la conexion mqtt
-#define MAX_MQTT_CONNECTION_RETRYS          5             //cantidad de reintentos de conexion mqtt
-#define MAX_MQTT_LIVE_TIMEOUT               300000        //timeout en milisegundos de desaparicion de mqtt 
+#define MAX_MQTT_CONNECTION_RETRYS          3             //cantidad de reintentos de conexion mqtt
+#define MAX_MQTT_LIVE_TIMEOUT               10            //timeout en minutos de desaparicion de mqtt (en loop)->RESET
 #define MAX_MQTT_WAIT_STATE                 3             //minutos de espera de reintento de conexion al broker
 #define SHORT_DELAY_MQTT_LED                50
 #define MQTT_DISCONNECTED_STATE             0             //valores para _flag_mqtt
@@ -26,7 +26,6 @@
 class MCC_mqtt{
     private:
         int mqtt_conn_timeout=0;                    //contador timeout de la conexion a mqtt en segundos
-        unsigned long live_timeout_mqtt;            //contador timeout de la conexion en funcionamiento de mqtt en minutos
         const char * _server;
         uint16_t _port_server;
         const char * _device;
@@ -38,6 +37,8 @@ class MCC_mqtt{
         int _led;
         uint8_t _mqtt_conn_retrys;
         const char* _ca_cert;
+        uint8_t _flag_start_timeout_live_mqtt=0;
+        void _setLed(void);
 
     public:
         bool conn(void);
@@ -50,7 +51,8 @@ class MCC_mqtt{
         void setOnMess(std::function<void (char *, uint8_t *, unsigned int)> callb);
         void shortBlinkMqttLed();
 
-        uint8_t mqtt_wait;
+        uint8_t mqtt_wait;                    //contador de estado de espera de reintento de conexion mqtt en minutos
+        uint8_t live_timeout_mqtt;            //contador timeout de la conexion en funcionamiento de mqtt en minutos
         
 };
 #endif

@@ -54,9 +54,9 @@ void rpc_proc(char* topic, byte* payload, unsigned int length){
     topic_rpc_rta="v1/devices/me/rpc/response/"+topic_rpc_req.substring(26);
     broker.shortBlinkMqttLed();
     //--Debug
-    Serial.print("Topico de pregunta:");Serial.println(topic_rpc_req);
-    Serial.print("Mensaje de pregunta:");Serial.println(msg_rpc_req);
-    Serial.print("Topico de respuesta:");Serial.println(topic_rpc_rta);
+    //Serial.print("Topico de pregunta:");Serial.println(topic_rpc_req);
+    //Serial.print("Mensaje de pregunta:");Serial.println(msg_rpc_req);
+    //Serial.print("Topico de respuesta:");Serial.println(topic_rpc_rta);
 
     //--parseo de la payload (msg_rpc_req)
     StaticJsonDocument<200> parse_payload;
@@ -76,9 +76,9 @@ void rpc_proc(char* topic, byte* payload, unsigned int length){
     valor=((String)parametro_rpc).substring(ind1+1);
 
     //--Debug del parseo
-    Serial.print("Comando:");Serial.println(comando_rpc);
-    Serial.print("Parametro:");Serial.println(parametro);
-    Serial.print("Valor:");Serial.println(valor);
+    //Serial.print("Comando:");Serial.println(comando_rpc);
+    //Serial.print("Parametro:");Serial.println(parametro);
+    //Serial.print("Valor:");Serial.println(valor);
 
     comando=(String)comando_rpc;
     //json_out[0]='\0';

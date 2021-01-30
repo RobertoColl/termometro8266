@@ -1,5 +1,5 @@
 //--Proceso de medicion
-#include "medicion.h"
+#include "mediciones.h"
 
 //--Variables extenas
 

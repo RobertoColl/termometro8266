@@ -1,9 +1,9 @@
 #include "backend.h"
 
 
-//--Externas
+//--Variables externas
 extern ESP8266WebServer web_server;
-extern File file_bs_css,file_bs_js,file_jq,file_font;
+//extern File file_estado,file_bs_css,file_bs_js,file_jq,file_font;
 
 
 extern String passwd_AP;
@@ -30,8 +30,9 @@ extern uint32_t ubicacion_eeprom_pos;
 extern uint32_t fuota_eeprom_pos;
 extern uint32_t area_eeprom_pos;*/
 
+//--Variables locales
 int trys_load_files=3;   //Cantidad de intentos de carga de archivos pedidos por el browser
-File file_bs_css,file_bs_js,file_jq,file_font;
+File file_funciones,file_bs_css,file_bs_js,file_jq,file_font,file_estilo;
 
 void init_webserver(void){
   //--Configura los recursos web del server
@@ -40,6 +41,8 @@ void init_webserver(void){
   web_server.on("/js/bootstrap.min.js.gz", handle_bootstrap_js);
   web_server.on("/js/jquery.min.js.gz", handle_jquery);
   web_server.on("/fonts/montserrat-font.woff2", handle_font);
+  web_server.on("/js/funciones.js", handle_funciones);
+  web_server.on("/css/miestilo.css", handle_estilo);
   //web_server.on("/fonts/glyphicons-halflings-regular.woff2", handle_glicons);
   //--Paginas web
   web_server.on ( "/", handle_root);
@@ -50,6 +53,7 @@ void init_webserver(void){
   //--AJAX
   //web_server.on ("/setfixcolor",HTTP_GET, handle_setfixcolor);
   //web_server.on ("/setcolor",HTTP_GET,handle_setcolor);
+  
   web_server.on ("/refresh",HTTP_GET, handle_refresh);
   web_server.on ("/update_settings", HTTP_POST, handleUpdateSettings);
   web_server.on("/canal",HTTP_GET,handle_canal);
@@ -173,6 +177,37 @@ void handle_canal(void){
 }
 
 //-- Archivos servidos
+
+void handle_funciones(void){
+  for (int idx=1;idx<=trys_load_files;idx++){
+     file_funciones = LittleFS.open("/js/funciones.js", "r");
+     if (!file_funciones) {
+        Serial.print("Fallo carga funciones! ");
+        Serial.println(idx);
+        delay(200);
+     }
+     else{
+        web_server.streamFile(file_funciones, "text/javascript");
+        return;
+     }
+  } 
+}
+
+void handle_estilo(void){
+  for (int idx=1;idx<=trys_load_files;idx++){
+     file_estilo = LittleFS.open("/css/miestilo.css", "r");
+     if (!file_estilo) {
+        Serial.print("Fallo carga estilo CSS! ");
+        Serial.println(idx);
+        delay(200);
+     }
+     else{
+        web_server.streamFile(file_estilo, "text/css");
+        return;
+     }
+  } 
+}
+
 void handle_bootstrap_css(void){
   for (int idx=1;idx<=trys_load_files;idx++){
      file_bs_css = LittleFS.open("/css/bootstrap.min.css.gz", "r");

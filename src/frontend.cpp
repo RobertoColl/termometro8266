@@ -41,35 +41,8 @@ void handle_root() {
     <link href='/css/bootstrap.min.css.gz' rel='stylesheet'>\
     <script src='/js/jquery.min.js.gz'></script>\
     <script src='/js/bootstrap.min.js.gz'></script>\
-    <style>\
-     @font-face {\
-      font-family: 'Montserrat';\
-      font-style: normal;\
-      font-weight: 400;\
-      src: local('Montserrat Regular'), local('Montserrat-Regular'), url(/fonts/montserrat-font.woff2) format('woff2');\
-      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\
-     }\
-     body{\
-      font: 18px Montserrat, sans-serif;\
-      line-height: 1.8;\
-      color: #2f2f2f;\
-     }\
-     p {font-size: 16px;}\
-     table {font-size: 12px;}\
-     thead {\
-       background-color: #c1c4c6;\
-       color: #555555;\
-     };\
-     .margin {margin-bottom: 45px;}\
-     tbody{\
-      background-color: #f0f2f4;\
-      color: #1e1e1e;\
-     }\
-     .bg-2 {\
-      background-color: #f2f1f0;\
-      color: #555555;\
-     }\
-    </style>\
+    <script src='/js/funciones.js'></script>\
+    <link href='/css/miestilo.css' rel='stylesheet'>\
    </head>\
    <body>\
     <header>\
@@ -118,37 +91,6 @@ void handle_root() {
          $('#contenedor').load('estado.html');\
          refresh();\
         });\
-        function valida(par){\
-         switch (par){\
-          case 0:\
-           $('#contenedor').load('estado.html');\
-           break;\
-          case 1:   \
-           document.forms['actualiza'].submit();\
-           break;\
-         }\
-        }\
-        function valida_timers(par){\
-         if (par==1){\
-          document.forms['actualiza_timers'].submit();\
-         }else{\
-          $('#contenedor').load('estado.html');\
-         }\
-        }\
-        function refresh(){\
-         var xhttp = new XMLHttpRequest();\
-         xhttp.onreadystatechange = function(){\
-          if (this.readyState == 4 && this.status == 200){\
-           state=this.responseText.split(',');\
-           if (state[0]=='1'){document.getElementById('stc1').innerHTML='Encendido';}\
-           if (state[0]=='0'){document.getElementById('stc1').innerHTML='Apagado';}\
-           if (state[1]=='1'){document.getElementById('stc2').innerHTML='Encendido';}\
-           if (state[1]=='0'){document.getElementById('stc2').innerHTML='Apagado';}\
-          }\
-         };\
-         xhttp.open('GET', 'refresh', true);\
-         xhttp.send(); \
-        }\
       </script>\
    </body>\
 </html>";
@@ -166,27 +108,6 @@ void handle_estado() {
    $(document).ready(function() {\
    refresh();\
    });\
-   function onchangech(ch){\
-    var xhttp = new XMLHttpRequest();\
-    xhttp.onreadystatechange = function(){\
-     if (this.readyState == 4 && this.status == 200){\
-      if(ch=='11'){\
-       document.getElementById('stc1').innerHTML = 'Encendido';\
-      }\
-     if(ch=='10'){\
-       document.getElementById('stc1').innerHTML = 'Apagado';\
-      }\
-     if(ch=='21'){\
-       document.getElementById('stc2').innerHTML = 'Encendido';\
-      }\
-     if(ch=='20'){\
-       document.getElementById('stc2').innerHTML = 'Apagado';\
-      }\
-     }\
-    };\
-    xhttp.open('GET', 'canal?accion='+ch, true);\
-    xhttp.send(); \
-    }\
   </script>\
  </head>\
  <body><br><br>\

@@ -86,7 +86,11 @@ bool MCC_mqtt::conn(void){
     mqtt_conn_timeout=0;
 
     while (!mqtt.connected()) {
-        Serial.print("Intentando conexión a Broker MQTT ");
+        if (_mqtt_conn_retrys==0){
+            Serial.print("Intentando conexión a Broker MQTT (");Serial.print(_mqtt_conn_retrys+1);Serial.print(") ");
+        }else{
+            Serial.print("Reintento conexión a Broker MQTT (");Serial.print(_mqtt_conn_retrys+1);Serial.print(")  ");
+        }
         Serial.print(_server);
         Serial.print(":");
         Serial.print(_port_server);
@@ -102,6 +106,7 @@ bool MCC_mqtt::conn(void){
         if (_conn_mqtt_status) {
             _flag_mqtt=MQTT_CONNECTED_STATE;
             _mqtt_conn_retrys=0;
+            _flag_start_timeout_live_mqtt=0;
             Serial.println("Conectado a MQTT");
             this->sub(_topic_sub);
             //this->pub(_topic_status,"up");
@@ -109,11 +114,11 @@ bool MCC_mqtt::conn(void){
             //break;
         }
         delay(300);
-        Serial.print("Reintento:");Serial.println(_mqtt_conn_retrys);
+        //Serial.print("Reintento:");Serial.println(_mqtt_conn_retrys);
         if (_mqtt_conn_retrys>=MAX_MQTT_CONNECTION_RETRYS){
             _flag_mqtt=MQTT_MAX_RETRY_STATE;
             _mqtt_conn_retrys=0;
-            Serial.print("MAX Retrys. Falló conexióm MQTT, rc=");
+            Serial.print("MAX Retrys. Fallo reiterado de conexióm MQTT, rc=");
             Serial.println(mqtt.state());
             return _flag_mqtt;
             //break;
@@ -155,22 +160,27 @@ bool MCC_mqtt::loop(void){
         if (_flag_mqtt==MQTT_MAX_RETRY_STATE){
             _flag_mqtt=MQTT_WAIT_STATE;
             mqtt_wait=0;
+            _setLed();
             return false;
         }
         if (_flag_mqtt==MQTT_WAIT_STATE){
             if (mqtt_wait>=MAX_MQTT_WAIT_STATE){
                 _flag_mqtt=MQTT_DISCONNECTED_STATE;
+                _setLed();
                 return false;
             }
             else{
+                _setLed();
                 return false;
             }
         }
         if (this->conn()){
             mqtt.loop();
+            _setLed();
             return true;
         }else{
             Serial.println("No se pudo hacer loop");
+            _setLed();
             return false;
         }
     }
@@ -233,9 +243,12 @@ bool MCC_mqtt::pub(String topic, String message){
  *        Devuelve el estado de la conexión: 1 conectado, 0 no conectado
  */
 bool MCC_mqtt::control(void){
-    if (!mqtt.connected()){   
-        Serial.println(live_timeout_mqtt - millis());
-        if (live_timeout_mqtt - millis() <= MAX_MQTT_LIVE_TIMEOUT) {   
+    if (!mqtt.connected()){  
+        if (_flag_start_timeout_live_mqtt==0){
+            live_timeout_mqtt=0;
+            _flag_start_timeout_live_mqtt=1;
+        }      
+        if (live_timeout_mqtt >= MAX_MQTT_LIVE_TIMEOUT) {   
             Serial.println("########################");
             Serial.println("Reset por MQTT Timeout");
             Serial.println("########################");
@@ -253,5 +266,17 @@ void MCC_mqtt::shortBlinkMqttLed(void){
     digitalWrite(_led, HIGH);
     delay(SHORT_DELAY_MQTT_LED);
     digitalWrite(_led, LOW);
+
+}
+
+void MCC_mqtt::_setLed(void){
+    switch(_flag_mqtt){
+        case MQTT_CONNECTED_STATE:
+            digitalWrite(_led, HIGH);
+            break;
+        case MQTT_DISCONNECTED_STATE:
+            digitalWrite(_led, LOW);
+            break;
+    }
 
 }

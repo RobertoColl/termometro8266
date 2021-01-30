@@ -13,7 +13,8 @@
 // Info:    Template para sistema de monitoreo sobre hardware Termometro_8266 V1.0
 //            
 //          
-// TODO: 
+// TODO: mandar on line a la dash??, indicacion luminosa estados mqtt(wait, etc), funcion de publicacion, comando ident
+// commit: migracion de js a littlefs, fix de mqtt reset
 //
 // Para subir FileSystem: platformio run --target uploadfs
 
@@ -28,7 +29,8 @@
 #include "eeprom.h"
 #include "frontend.h"
 #include "backend.h"
-#include "medicion.h"
+#include "mediciones.h"
+#include "senalizacion.h"
 
 /*===================[Definiciones de hardware]]=================================*/
 #define CANAL1                   12    // pin salida canal 1
@@ -93,6 +95,7 @@ uint8_t flag_wifi=0;
 uint8_t flag_mqtt_conn=0;
 uint8_t flag_wifi_conn=0;
 uint8_t flag_publica=0;
+uint8_t led_pulso=LED_PULSO;
 uint8_t canal1=CANAL1;
 uint8_t canal2=CANAL2;
 
@@ -124,7 +127,7 @@ void setup() {
   pinMode(FRESET,INPUT);
   if (digitalRead(FRESET)){
     Serial.println("\r\nFactory reset!!");
-    factory_reset();
+    //factory_reset();
   }
   read_vars(1);  
   
@@ -163,8 +166,7 @@ void setup() {
 void loop() {
   wifi.control();
   broker.control();
-  wifi.setLed();
-  flag_seg == 0 ? digitalWrite(LED_PULSO,HIGH):digitalWrite(LED_PULSO,LOW);//digitalWrite(LED, !digitalRead(LED));
+  leds();
   broker.loop();
   web_server.handleClient();
   medicion();

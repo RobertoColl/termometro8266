@@ -1,5 +1,5 @@
-#ifndef _medicion_h_
-#define _medicion_h_
+#ifndef _mediciones_h_
+#define _mediciones_h_
 
 #include <Arduino.h>
 

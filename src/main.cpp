@@ -13,8 +13,8 @@
 // Info:    Template para sistema de monitoreo sobre hardware Termometro_8266 V1.0
 //            
 //          
-// TODO: mandar on line a la dash??, indicacion luminosa estados mqtt(wait, etc), funcion de publicacion, comando ident
-// commit: migracion de js a littlefs, fix de mqtt reset
+// TODO: mandar on line a la dash??, funcion de publicacion de medicion, comando ident
+// commit: gestion de led mqtt, add tipo_device a página de info, limpieza código comentado
 //
 // Para subir FileSystem: platformio run --target uploadfs
 
@@ -117,7 +117,7 @@ void setup() {
   interrupts();
   delay(100);
 
-  Serial.println("\r\nTermómetro 8266");
+  Serial.println(tipo_device);
   Serial.print("Version:");
   Serial.print(fversion);
   EEPROM.begin(MAX_BYTE_EEPROM);
@@ -127,7 +127,7 @@ void setup() {
   pinMode(FRESET,INPUT);
   if (digitalRead(FRESET)){
     Serial.println("\r\nFactory reset!!");
-    //factory_reset();
+    factory_reset();
   }
   read_vars(1);  
   
@@ -153,20 +153,17 @@ void setup() {
   check_update();
   
   //--Inicializacion mqtt
-  broker.init(mqtt_server.c_str(), mqtt_tcp, device.c_str(), topic_dev_status.c_str(), will_mess, topic_rpc, LED_WIFI);
+  broker.init(mqtt_server.c_str(), mqtt_tcp, device.c_str(), topic_dev_status.c_str(), will_mess, topic_rpc, LED_PULSO);
   broker.setOnMess(rpc_proc);
   broker.conn();
 
   //--Webserver y FS
   init_webserver();
-
-
 }
 
 void loop() {
   wifi.control();
   broker.control();
-  leds();
   broker.loop();
   web_server.handleClient();
   medicion();

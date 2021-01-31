@@ -15,7 +15,10 @@
 #define MAX_MQTT_CONNECTION_RETRYS          3             //cantidad de reintentos de conexion mqtt
 #define MAX_MQTT_LIVE_TIMEOUT               10            //timeout en minutos de desaparicion de mqtt (en loop)->RESET
 #define MAX_MQTT_WAIT_STATE                 3             //minutos de espera de reintento de conexion al broker
+#define VERY_SHORT_DELAY_MQTT_LED           25
 #define SHORT_DELAY_MQTT_LED                50
+#define LONG_DELAY_MQTT_LED                 150
+#define VERY_LONG_DELAY_MQTT_LED            300
 #define MQTT_DISCONNECTED_STATE             0             //valores para _flag_mqtt
 #define MQTT_CONNECTED_STATE                1
 #define MQTT_MAX_RETRY_STATE                2
@@ -39,6 +42,7 @@ class MCC_mqtt{
         const char* _ca_cert;
         uint8_t _flag_start_timeout_live_mqtt=0;
         void _setLed(void);
+        void _pubBlinkMqttLed();
 
     public:
         bool conn(void);
@@ -49,7 +53,7 @@ class MCC_mqtt{
         bool loop(void);
         bool control(void);
         void setOnMess(std::function<void (char *, uint8_t *, unsigned int)> callb);
-        void shortBlinkMqttLed();
+        
 
         uint8_t mqtt_wait;                    //contador de estado de espera de reintento de conexion mqtt en minutos
         uint8_t live_timeout_mqtt;            //contador timeout de la conexion en funcionamiento de mqtt en minutos

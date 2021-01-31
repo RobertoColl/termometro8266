@@ -10,6 +10,7 @@ extern void auth(void);
 extern String hversion;
 extern String fversion;
 extern String device;
+extern String tipo_device;
 extern String mqtt_server;
 extern String mqtt_tcp_str;
 extern String ubicacion;
@@ -54,7 +55,7 @@ void handle_root() {
          <span class='icon-bar'></span>\
          <span class='icon-bar'></span>\
         </button>\
-        <a class='navbar-brand' href='#'>Monitor remoto</a>\
+        <a class='navbar-brand' href='#'>"+tipo_device+"</a>\
        </div>\
        <div class='collapse navbar-collapse' id='navbar'>\
         <ul class='nav navbar-nav navbar-right'>\
@@ -233,7 +234,7 @@ void handle_info() {
    <div class='panel-heading'>Información</div>\
    <div class='panel-body'>\
     <div class='form-group'>\
-     <p>Dispositivo de monitoreo remoto</p>\
+     <p>"+tipo_device+" de monitoreo remoto</p>\
      <p>mcastello ingeniería</p>\
      <p>Versiones: hardware "+hversion+", firmware "+fversion+"</p>\
     </div>\

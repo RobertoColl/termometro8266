@@ -6,10 +6,7 @@
 
 //--Prototipos
 void leds(void);
-//void led_state_wifi(void);
-//void led_state_mqtt(void);
-//void led_state_sys(void);
-//void led_ident(void);
+
 
 
 #endif

@@ -52,15 +52,15 @@ void bienvenida(int led1,int led2,int led3){
   }
 }
 void factory_reset(void){
-  write_StringEE(0, device);
-  write_StringEE(30, mqtt_server);
-  write_StringEE(60, mqtt_tcp_str);
-  write_StringEE(90, passwd_AP);
-  write_StringEE(120, ssid);
-  write_StringEE(150, ssid_pass);
-  write_StringEE(180, ubicacion);
-  write_StringEE(210, fuota_server);
-  write_StringEE(240, area);
+  write_StringEE(device_eeprom_pos, device);
+  write_StringEE(mqtt_server_eeprom_pos, mqtt_server);
+  write_StringEE(mqtt_tcp_str_eeprom_pos, mqtt_tcp_str);
+  write_StringEE(passwd_AP_eeprom_pos, passwd_AP);
+  write_StringEE(ssid_eeprom_pos, ssid);
+  write_StringEE(ssid_passwd_eeprom_pos, ssid_pass);
+  write_StringEE(ubicacion_eeprom_pos, ubicacion);
+  write_StringEE(fuota_eeprom_pos, fuota_server);
+  write_StringEE(area_eeprom_pos, area);
 
   noInterrupts();
   EEPROM.commit();

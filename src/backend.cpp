@@ -1,15 +1,12 @@
 #include "backend.h"
 
 
-//--Variables externas
+//--Objetos externos
 extern ESP8266WebServer web_server;
-//extern File file_estado,file_bs_css,file_bs_js,file_jq,file_font;
 
-
+//--Variables externas
 extern String passwd_AP;
 extern String www_username;
-//extern String hversion;
-//extern String fversion;
 extern String device;
 extern String mqtt_server;
 extern String mqtt_tcp_str;
@@ -20,15 +17,6 @@ extern String ssid_pass;
 extern String header;
 extern uint8_t flag_canal1;
 extern uint8_t flag_canal2;
-/*extern uint32_t device_eeprom_pos;
-extern uint32_t mqtt_server_eeprom_pos;
-extern uint32_t mqtt_tcp_str_eeprom_pos;
-extern uint32_t passwd_AP_eeprom_pos;
-extern uint32_t ssid_eeprom_pos;
-extern uint32_t ssid_pass_eeprom_pos;
-extern uint32_t ubicacion_eeprom_pos;
-extern uint32_t fuota_eeprom_pos;
-extern uint32_t area_eeprom_pos;*/
 
 //--Variables locales
 int trys_load_files=3;   //Cantidad de intentos de carga de archivos pedidos por el browser
@@ -69,11 +57,7 @@ void auth(void){
 }
 
 void handleUpdateSettings(){
-  //bool res;
   String body;
-  //String rq_reset=web_server.arg("reset");
-  //Serial.print(rq_reset);
-  
   device=web_server.arg("device");
   mqtt_server=web_server.arg("mqtt_server");
   mqtt_tcp_str=web_server.arg("mqtt_tcp_str");
@@ -85,45 +69,8 @@ void handleUpdateSettings(){
 
   write_vars();
 
-
-/*
-  res = write_StringEE(device_eeprom_pos, web_server.arg("device"));
-  check_error_updating(res);
-  device=read_StringEE(device_eeprom_pos,25);
-
-  res = write_StringEE(mqtt_server_eeprom_pos, web_server.arg("mqtt_server"));
-  check_error_updating(res);
-  mqtt_server=read_StringEE(mqtt_server_eeprom_pos,25);
-
-  res = write_StringEE(mqtt_tcp_str_eeprom_pos, web_server.arg("mqtt_tcp_str"));
-  check_error_updating(res);
-  mqtt_tcp_str=read_StringEE(mqtt_tcp_str_eeprom_pos,25); 
-
-  res = write_StringEE(passwd_AP_eeprom_pos, web_server.arg("passwd_AP"));
-  check_error_updating(res);
-  passwd_AP=read_StringEE(passwd_AP_eeprom_pos,25); 
-
-  res = write_StringEE(ssid_eeprom_pos, web_server.arg("ssid"));
-  check_error_updating(res);
-  ssid=read_StringEE(ssid_eeprom_pos,25); 
-
-  res = write_StringEE(ssid_pass_eeprom_pos, web_server.arg("ssid_pass"));
-  check_error_updating(res);
-  ssid_pass=read_StringEE(ssid_pass_eeprom_pos,25); 
-
-  res = write_StringEE(ubicacion_eeprom_pos, web_server.arg("ubic"));
-  check_error_updating(res);
-  ubicacion=read_StringEE(ubicacion_eeprom_pos,25);  
-
-  res = write_StringEE(area_eeprom_pos, web_server.arg("area"));
-  check_error_updating(res);
-  area=read_StringEE(area_eeprom_pos,25); 
-
-  noInterrupts();
-  EEPROM.commit();
-  interrupts();*/
-  //Envia OK sin reset
-    body="<body>\
+  //--Envia OK
+   body="<body>\
      <div class='panel panel-primary bg-2'>\
       <div class='panel-heading'>Configuración</div>\
       <div class='panel-body'>\
@@ -144,15 +91,12 @@ void handleUpdateSettings(){
    </body>\
   </html>";
    web_server.send ( 200, "text/html", header+body);
-  //}
 }
 
 void handle_refresh(){
   String estados;
   auth();
-  //estados+="</td></tr>";
   estados=String(flag_canal1)+","+String(flag_canal2);
-  
   web_server.send(200,"text/html",estados);
 }
 

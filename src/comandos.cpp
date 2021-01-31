@@ -52,7 +52,6 @@ void rpc_proc(char* topic, byte* payload, unsigned int length){
     topic_rpc_req = String((char*)topic);
     msg_rpc_req = String((char*)payload);
     topic_rpc_rta="v1/devices/me/rpc/response/"+topic_rpc_req.substring(26);
-    broker.shortBlinkMqttLed();
     //--Debug
     //Serial.print("Topico de pregunta:");Serial.println(topic_rpc_req);
     //Serial.print("Mensaje de pregunta:");Serial.println(msg_rpc_req);

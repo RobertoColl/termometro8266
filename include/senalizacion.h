@@ -1,4 +1,4 @@
-#ifndef _senalizacion_h_
+/*#ifndef _senalizacion_h_
 #define _senalizacion_h_
 
 #include <Arduino.h>
@@ -9,4 +9,4 @@ void leds(void);
 
 
 
-#endif
+#endif*/

@@ -15,8 +15,8 @@ extern String area;
 extern String ssid;
 extern String ssid_pass;
 extern String header;
-extern uint8_t flag_canal1;
-extern uint8_t flag_canal2;
+extern uint8_t canal1_status;
+extern uint8_t canal2_status;
 
 //--Variables locales
 int trys_load_files=3;   //Cantidad de intentos de carga de archivos pedidos por el browser
@@ -96,7 +96,7 @@ void handleUpdateSettings(){
 void handle_refresh(){
   String estados;
   auth();
-  estados=String(flag_canal1)+","+String(flag_canal2);
+  estados=String(canal1_status)+","+String(canal2_status);
   web_server.send(200,"text/html",estados);
 }
 

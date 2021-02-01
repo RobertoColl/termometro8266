@@ -20,6 +20,10 @@ extern uint32_t ssid_passwd_eeprom_pos;
 extern uint32_t ubicacion_eeprom_pos;
 extern uint32_t fuota_eeprom_pos;
 extern uint32_t area_eeprom_pos;
+extern uint32_t canal1_eeprom_pos;
+extern uint32_t canal2_eeprom_pos;
+extern uint8_t canal1_status;
+extern uint8_t canal2_status;
 
 
 //--Muestra los archivos en el FS
@@ -61,6 +65,8 @@ void factory_reset(void){
   write_StringEE(ubicacion_eeprom_pos, ubicacion);
   write_StringEE(fuota_eeprom_pos, fuota_server);
   write_StringEE(area_eeprom_pos, area);
+  write_StringEE(canal1_eeprom_pos, String(canal1_status));
+  write_StringEE(canal2_eeprom_pos, String(canal2_status));
 
   noInterrupts();
   EEPROM.commit();
@@ -77,6 +83,8 @@ void read_vars(bool ver){
   ubicacion=read_StringEE(ubicacion_eeprom_pos, 25); 
   fuota_server=read_StringEE(fuota_eeprom_pos, 25);
   area=read_StringEE(area_eeprom_pos,25);
+  canal1_status=(read_StringEE(canal1_eeprom_pos,25)).toInt();
+  canal2_status=(read_StringEE(canal2_eeprom_pos,25)).toInt();
   mqtt_tcp=mqtt_tcp_str.toInt();
   if(ver){
     Serial.println("");
@@ -89,6 +97,8 @@ void read_vars(bool ver){
     Serial.print("Passwd SSID:");Serial.println(ssid_pass);
     Serial.print("Ubicacion:");Serial.println(ubicacion);
     Serial.print("Area:");Serial.println(area);
+    Serial.print("Canal1:");Serial.println(canal1_status);
+    Serial.print("Canal2:");Serial.println(canal2_status);
   }
 }
 
@@ -126,6 +136,14 @@ void write_vars(void){
   res = write_StringEE(area_eeprom_pos, area);
   check_error_updating(res);
   area=read_StringEE(area_eeprom_pos,25); 
+
+  res = write_StringEE(canal1_eeprom_pos, String(canal1_status));
+  check_error_updating(res);
+  canal1_status=(read_StringEE(canal1_eeprom_pos,25)).toInt();
+
+  res = write_StringEE(canal2_eeprom_pos, String(canal2_status));
+  check_error_updating(res);
+  canal2_status=(read_StringEE(canal2_eeprom_pos,25)).toInt();
 
   noInterrupts();
   EEPROM.commit();
@@ -177,8 +195,4 @@ void check_update(void){
         break;
     }
   }
-}
-
-void publica_medicion(void){
-
 }

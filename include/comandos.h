@@ -17,6 +17,10 @@ void rpc_help(void);
 void rpc_version(void);
 void rpc_param(String parametro);
 void rpc_set(String parametro,String valor);
+void rpc_ident(void);
+void rpc_ip(void);
+void rpc_push(void);
+//void rpc_getonline(void);
 void rpc_unknown(String comando);
 
 #endif

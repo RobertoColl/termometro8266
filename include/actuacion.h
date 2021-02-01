@@ -1,6 +1,7 @@
 #ifndef _actuacion_h_
 #define _actuacion_h_
 #include <Arduino.h>
+#include "publica.h"
 
 
 void canal1_on(void);

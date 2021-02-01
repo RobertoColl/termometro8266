@@ -13,13 +13,15 @@
 // Info:    Template para sistema de monitoreo sobre hardware Termometro_8266 V1.0
 //            
 //          
-// TODO: mandar on line a la dash??, funcion de publicacion de medicion, comando ident
-// commit: gestion de led wifi, gestion de conexion wifi
+// TODO: gestion del rango, 
+//       gestion de atributos,        
+//       gestion de medicion
+//
+// commit: funcion de publicacion de medicion, comandos ip, ident, push y param canal, guarda estado canales en eeprom y recupera al inicio y los incluye en telemetria
 //
 // Para subir FileSystem: platformio run --target uploadfs
 
 /*===================[Inclusiones]===============================================*/
-//#include <TimerOne.h>
 #include "wifi.h"
 #include "interrupciones.h"
 #include "global_vars.h"
@@ -31,8 +33,9 @@
 #include "backend.h"
 #include "mediciones.h"
 #include "senalizacion.h"
+#include "publica.h"
 
-/*===================[Definiciones de hardware]]=================================*/
+/*===================[Definiciones de hardware]==================================*/
 #define CANAL1                   12    // pin salida canal 1
 #define CANAL2                   13    // pin salida canal 2
 #define LED_PULSO                14    // led de pulso
@@ -56,6 +59,8 @@ uint32_t ssid_passwd_eeprom_pos=150;
 uint32_t ubicacion_eeprom_pos=180;
 uint32_t fuota_eeprom_pos=210;
 uint32_t area_eeprom_pos=240;
+uint32_t canal1_eeprom_pos=270;
+uint32_t canal2_eeprom_pos=300;
 
 /*===================[Variables de Factory reset]================================*/
 String device                =   "terinfssp01";
@@ -67,6 +72,8 @@ String ssid_pass             =   "wpaadministrator08";
 String passwd_AP             =   "Lancast3r";
 String area                  =   "Informatica";
 String ubicacion             =   "Sala Servidores";
+uint8_t canal1_status        =   0;
+uint8_t canal2_status        =   0;
 
 /*===================[Variables harcodeadas]=====================================*/
 String www_username           =   "admin";
@@ -74,7 +81,7 @@ String hardware               =   "ter8266V1";
 String tipo_device            =   "Termometro";
 const char * will_mess        =   "down";
 uint8_t tls                   =   1;
-const char * topic_telemetry  =   "v1/devices/me/telemtry";
+const char * topic_telemetry  =   "v1/devices/me/telemetry";
 const char * topic_attributes =   "v1/devices/me/attributes";
 const char * topic_rpc        =   "v1/devices/me/rpc/request/+";
 uint8_t MAX_mqtt_conn_timeout =   10; //timeout en segundos para la conexion al broker
@@ -88,16 +95,12 @@ String topic_dev_status;
 uint16_t mqtt_tcp;
 uint8_t mqtt_conn_timeout=0;      //timeout de la conexion al broker en segundos
 uint8_t wifi_conn_timeout=0;      //timeout de la conexion al broker en segundos
-//unsigned long live_timeout_mqtt=0;      //timeout de la conexion en funcionamiento de broker en minutos
 uint8_t flag_seg=0;
-//uint8_t flag_mqtt=0;
 uint8_t flag_wifi=0;
-//uint8_t flag_mqtt_conn=0;
-//uint8_t flag_wifi_conn=0;
 uint8_t flag_publica=0;
 uint8_t led_pulso=LED_PULSO;
-uint8_t canal1=CANAL1;
-uint8_t canal2=CANAL2;
+uint8_t canal1_pin=CANAL1;
+uint8_t canal2_pin=CANAL2;
 
 //===================[Instancias]================================================*/
 MCC_wifi wifi;

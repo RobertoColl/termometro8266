@@ -12,6 +12,7 @@ extern uint8_t mqtt_wait;
 extern uint8_t live_timeout_mqtt;
 extern uint8_t wifi_wait;
 extern uint8_t live_timeout_wifi;
+extern uint16_t cont_int_pub;
 
 //--Variables locales
 uint8_t seg=0;
@@ -24,6 +25,7 @@ void timer0_ISR (void) {
   seg++;
   mqtt_conn_timeout++;//sacar
   wifi.wifi_conn_timeout++;
+  cont_int_pub++;
   //Serial.print("s:");Serial.println(seg);
 
   if(seg==60){
@@ -33,7 +35,6 @@ void timer0_ISR (void) {
     broker.live_timeout_mqtt++;
     wifi.wifi_wait++;
     wifi.live_timeout_wifi++;
-  
   }
 
   if(minu==60) minu=0;

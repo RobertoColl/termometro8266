@@ -2,6 +2,7 @@
 
 //--Objetos externos
 extern MCC_mqtt broker;
+extern MCC_mqtt wifi;
 
 //--Variables externas
 extern String hardware;
@@ -27,8 +28,9 @@ extern uint32_t ssid_pass_eeprom_pos;
 extern uint32_t ubicacion_eeprom_pos;
 extern uint32_t fuota_eeprom_pos;
 extern uint32_t area_eeprom_pos;
-extern uint8_t canal1;
-extern uint8_t canal2;
+extern uint8_t canal1_status;
+extern uint8_t canal2_status;
+extern uint8_t flag_push;
 
 
 //--Variables locales
@@ -43,8 +45,7 @@ String comando;
 int ind1;
 StaticJsonDocument<200> out;
 char json_out[200];
-uint8_t flag_canal1=0;
-uint8_t flag_canal2=0;
+
 
 
 void rpc_proc(char* topic, byte* payload, unsigned int length){
@@ -110,6 +111,18 @@ void rpc_proc(char* topic, byte* payload, unsigned int length){
     else if(comando=="set"){
         rpc_set(parametro,valor);
     }
+    else if(comando=="ident"){
+        rpc_ident();
+    }
+    else if(comando=="ip"){
+        rpc_ip();
+    }
+    else if(comando=="push"){
+        rpc_push();
+    }
+    /*else if(comando=="getonline"){
+        rpc_getonline();
+    }*/
     else{
         rpc_unknown(comando);
     }
@@ -122,7 +135,7 @@ void send_rpc_rta(void){
 
 //------------------------------Comandos RPC----------------------------------------
 void rpc_help(void){
-    out["comandos"]="read, param, set, update, reset, ver";
+    out["comandos"]="read, param, set, update, reset, ident, ip, ver";
     send_rpc_rta();
 }
 
@@ -158,7 +171,7 @@ void rpc_update(void){
 }
 
 
-//--Muestra las variables de EEPROM (parámetros)
+//--Muestra las variables de EEPROM y otros parámetros
 void rpc_param(String parametro){
     if (parametro=="ssid"){
         out["ssid"]=ssid;
@@ -184,6 +197,13 @@ void rpc_param(String parametro){
     else if (parametro=="area"){
         out["Area"]=area;
     }
+    else if (parametro=="canal1"){
+        out["Canal 1"]=canal1_status==1 ? "Encendido":"Apagado";
+    }
+    else if (parametro=="canal2"){
+        out["Canal 2"]=canal2_status==1 ? "Encendido":"Apagado";
+    }
+
     send_rpc_rta();
 }
 
@@ -192,42 +212,34 @@ void rpc_set(String parametro,String valor){
     //--Cambia las variables de EEPROM
     if (parametro=="ssid"){
         ssid=valor;
-        //write_StringEE(ssid_eeprom_pos, valor);
         out["ssid"]=valor;
     }
     else if (parametro=="ssid_pass"){
         ssid_pass=valor;
-        //write_StringEE(ssid_pass_eeprom_pos, valor);
         out["ssid passwd"]=valor;
     }
     else if (parametro=="device"){
         device=valor;
-        //write_StringEE(device_eeprom_pos, valor);
         out["Nombre"]=valor;
     }
     else if (parametro=="mqtt_server"){
         mqtt_server=valor;
-        //write_StringEE(mqtt_server_eeprom_pos, valor);
         out["mqtt_server"]=valor;
     }
     else if (parametro=="mqtt_port"){
         mqtt_tcp_str=valor;
-        //write_StringEE(mqtt_tcp_str_eeprom_pos, valor);
         out["mqtt_port"]=valor;
     }
     else if (parametro=="ubicacion"){
         ubicacion=valor;
-        //write_StringEE(ubicacion_eeprom_pos, valor);
         out["Ubicacion"]=valor;
     }
     else if (parametro=="fuota"){
         fuota_server=valor;
-        //write_StringEE(fuota_eeprom_pos, valor);
         out["fuota_server"]=valor;
     }
     else if (parametro=="area"){
         area=valor;
-        //write_StringEE(area_eeprom_pos, valor);
         out["Area"]=valor;
     }
     //Cambia estado de canales
@@ -256,6 +268,32 @@ void rpc_set(String parametro,String valor){
     read_vars(0);
     send_rpc_rta();
 }
+
+void rpc_ident(void){
+    out["Identificando"]="...";
+    send_rpc_rta();
+    for(int i=0;i<5;i++){
+       bienvenida(14, 2, 16);
+    }
+}
+
+void rpc_ip(void){
+    out["IP Wlan"]=String(WiFi.localIP()[0])+"."+String(WiFi.localIP()[1])+"."+String(WiFi.localIP()[2])+"."+String(WiFi.localIP()[3]);
+    out["IP AP"]=String(WiFi.softAPIP()[0])+"."+String(WiFi.softAPIP()[1])+"."+String(WiFi.softAPIP()[2])+"."+String(WiFi.softAPIP()[3]);
+    send_rpc_rta();
+}
+
+void rpc_push(void){
+    flag_push=1;
+    out["Push"]="enviado";
+    out["Valor"]=0;
+    send_rpc_rta();
+}
+
+/*void rpc_getonline(void){
+    out["value"]=(client.connected() ? "true":"false");
+    send_rpc_rta();
+}*/
 
 void rpc_unknown(String comando){
     out["Desconocido"]=comando;

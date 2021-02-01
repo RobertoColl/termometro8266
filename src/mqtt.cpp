@@ -88,7 +88,7 @@ bool MCC_mqtt::conn(void){
         if (_mqtt_conn_retrys==0){
             Serial.print("Intentando conexión a Broker MQTT (");Serial.print(_mqtt_conn_retrys+1);Serial.print(") ");
         }else{
-            Serial.print("Reintento conexión a Broker MQTT (");Serial.print(_mqtt_conn_retrys+1);Serial.print(")  ");
+            Serial.print("Reintento conexión a Broker MQTT  (");Serial.print(_mqtt_conn_retrys+1);Serial.print(") ");
         }
         Serial.print(_server);
         Serial.print(":");
@@ -246,7 +246,7 @@ bool MCC_mqtt::control(void){
             return false;
         }
     }
-    live_timeout_mqtt=millis();
+    //live_timeout_mqtt=millis();
     return true;
 }
 

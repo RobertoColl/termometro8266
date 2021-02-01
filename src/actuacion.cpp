@@ -2,27 +2,31 @@
 
 
 //--Variables externas
-extern uint8_t canal1;
-extern uint8_t canal2;
-extern uint8_t flag_canal1;
-extern uint8_t flag_canal2;
+extern uint8_t canal1_pin;
+extern uint8_t canal2_pin;
+extern uint8_t canal1_status;
+extern uint8_t canal2_status;
 
 void canal1_on(void){
-    digitalWrite(canal1, HIGH);
-    flag_canal1=1;
+    digitalWrite(canal1_pin, HIGH);
+    canal1_status=1;
+    publica_canales(1);
 }
 
 void canal1_off(void){
-    digitalWrite(canal1, LOW);
-    flag_canal1=0;
+    digitalWrite(canal1_pin, LOW);
+    canal1_status=0;
+    publica_canales(1);
 }
 
 void canal2_on(void){
-    digitalWrite(canal2, HIGH);
-    flag_canal2=1;
+    digitalWrite(canal2_pin, HIGH);
+    canal2_status=1;
+    publica_canales(2);
 }
 
 void canal2_off(void){
-    digitalWrite(canal2, LOW);
-    flag_canal2=0;
+    digitalWrite(canal2_pin, LOW);
+    canal2_status=0;
+    publica_canales(2);
 }

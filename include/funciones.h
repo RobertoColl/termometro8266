@@ -13,6 +13,5 @@ void write_vars(void);
 void factory_reset(void);
 unsigned int hexToDec(String hexString);
 void check_update(void);
-void publica_medicion(void);
 
 #endif

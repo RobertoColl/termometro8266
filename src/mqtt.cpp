@@ -83,7 +83,7 @@ void MCC_mqtt::setOnMess(std::function<void (char *, uint8_t *, unsigned int)> c
  */
 bool MCC_mqtt::conn(void){
     _flag_mqtt=MQTT_DISCONNECTED_STATE;
-    mqtt_conn_timeout=0;
+    mqtt_conn_timeout=0;//sacar
     while (!mqtt.connected()) {
         if (_mqtt_conn_retrys==0){
             Serial.print("Intentando conexión a Broker MQTT (");Serial.print(_mqtt_conn_retrys+1);Serial.print(") ");

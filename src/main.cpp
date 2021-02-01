@@ -14,7 +14,7 @@
 //            
 //          
 // TODO: mandar on line a la dash??, funcion de publicacion de medicion, comando ident
-// commit: gestion de led mqtt, add tipo_device a página de info, limpieza código comentado
+// commit: gestion de led wifi, gestion de conexion wifi
 //
 // Para subir FileSystem: platformio run --target uploadfs
 
@@ -90,10 +90,10 @@ uint8_t mqtt_conn_timeout=0;      //timeout de la conexion al broker en segundos
 uint8_t wifi_conn_timeout=0;      //timeout de la conexion al broker en segundos
 //unsigned long live_timeout_mqtt=0;      //timeout de la conexion en funcionamiento de broker en minutos
 uint8_t flag_seg=0;
-uint8_t flag_mqtt=0;
+//uint8_t flag_mqtt=0;
 uint8_t flag_wifi=0;
-uint8_t flag_mqtt_conn=0;
-uint8_t flag_wifi_conn=0;
+//uint8_t flag_mqtt_conn=0;
+//uint8_t flag_wifi_conn=0;
 uint8_t flag_publica=0;
 uint8_t led_pulso=LED_PULSO;
 uint8_t canal1=CANAL1;
@@ -127,7 +127,7 @@ void setup() {
   pinMode(FRESET,INPUT);
   if (digitalRead(FRESET)){
     Serial.println("\r\nFactory reset!!");
-    factory_reset();
+    //factory_reset();
   }
   read_vars(1);  
   
@@ -162,9 +162,12 @@ void setup() {
 }
 
 void loop() {
-  wifi.control();
-  broker.control();
-  broker.loop();
+  flag_wifi=wifi.control();
+  //Serial.print(flag_wifi);
+  if (flag_wifi){
+    broker.control();
+    broker.loop();
+  }
   web_server.handleClient();
   medicion();
   publica_medicion();

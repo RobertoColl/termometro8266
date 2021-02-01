@@ -11,7 +11,7 @@ extern uint8_t led_pulso;
 
 void leds(void){
     //--WiFi
-    wifi.setLed();
+    //wifi.setLed();
     //--Pulso
     flag_seg == 0 ? digitalWrite(led_pulso,HIGH):digitalWrite(led_pulso,LOW);//digitalWrite(LED, !digitalRead(LED));
     //--MQTT

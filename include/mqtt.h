@@ -28,7 +28,7 @@
 
 class MCC_mqtt{
     private:
-        int mqtt_conn_timeout=0;                    //contador timeout de la conexion a mqtt en segundos
+        int mqtt_conn_timeout=0;//sacar                    //contador timeout de la conexion a mqtt en segundos
         const char * _server;
         uint16_t _port_server;
         const char * _device;

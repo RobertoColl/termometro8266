@@ -2,13 +2,16 @@
 
 //--Objetos externos
 extern MCC_mqtt broker;
+extern MCC_wifi wifi;
 
 //--Variables extenas
 extern uint8_t flag_seg;
-extern uint8_t mqtt_conn_timeout;
+extern uint8_t mqtt_conn_timeout;//sacar
 extern uint8_t wifi_conn_timeout;
 extern uint8_t mqtt_wait;
 extern uint8_t live_timeout_mqtt;
+extern uint8_t wifi_wait;
+extern uint8_t live_timeout_wifi;
 
 //--Variables locales
 uint8_t seg=0;
@@ -19,8 +22,8 @@ uint8_t minu=0;
 void timer0_ISR (void) {
   flag_seg=~flag_seg;
   seg++;
-  mqtt_conn_timeout++;
-  wifi_conn_timeout++;
+  mqtt_conn_timeout++;//sacar
+  wifi.wifi_conn_timeout++;
   //Serial.print("s:");Serial.println(seg);
 
   if(seg==60){
@@ -28,6 +31,8 @@ void timer0_ISR (void) {
     minu++;
     broker.mqtt_wait++;
     broker.live_timeout_mqtt++;
+    wifi.wifi_wait++;
+    wifi.live_timeout_wifi++;
   
   }
 

@@ -17,10 +17,12 @@ extern String ssid_pass;
 extern String header;
 extern uint8_t canal1_status;
 extern uint8_t canal2_status;
+extern uint8_t flag_push_att;
 
 //--Variables locales
 int trys_load_files=3;   //Cantidad de intentos de carga de archivos pedidos por el browser
 File file_funciones,file_bs_css,file_bs_js,file_jq,file_font,file_estilo;
+
 
 void init_webserver(void){
   //--Configura los recursos web del server
@@ -68,6 +70,7 @@ void handleUpdateSettings(){
   area=web_server.arg("area");
 
   write_vars();
+  flag_push_att=1;
 
   //--Envia OK
    body="<body>\

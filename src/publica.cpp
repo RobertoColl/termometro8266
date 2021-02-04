@@ -5,40 +5,76 @@ extern MCC_mqtt broker;
 
 //--Variables externas
 extern const char * topic_telemetry;
+extern const char * topic_attributes;
 extern uint8_t canal1_status;
 extern uint8_t canal2_status;
+extern String ssid;
+extern String ubicacion;
+extern String area;
+extern String fversion;
 
 //--Variables locales
 uint16_t cont_int_pub=0;
-StaticJsonDocument<200> telem;
-char json_telem[200];
+StaticJsonDocument<200> pub;
+char json_pub[200];
 uint8_t flag_push=0;
+uint8_t flag_push_att=0;
 
 
-void send_pub(void){
-    serializeJson(telem, json_telem);
-    Serial.print("Publica:");
-    Serial.println(json_telem);
-    broker.pub(topic_telemetry,json_telem);
+void send_pub(int topico){
+    serializeJson(pub, json_pub);
+    switch (topico){
+        case TELEMETRY:
+            Serial.print("Publica Telemetria:");
+            Serial.println(json_pub);
+            broker.pub(topic_telemetry,json_pub);
+            break;
+        case ATTRIBUTES:
+            Serial.print("Publica Atributos:");
+            Serial.println(json_pub);
+            broker.pub(topic_attributes,json_pub);
+            break;
+    }
 }
 
 void publica_medicion(void){
     if (cont_int_pub>=INTERV_PUB||flag_push==1){
-        telem.clear();
+        pub.clear();
         flag_push=0;
         cont_int_pub=0;
-        telem["Temperatura"]=random(20,30);
-        send_pub();
+        pub["Temperatura"]=random(20,30);//sólo para testing
+        send_pub(TELEMETRY);
     }
 }
 
 void publica_canales(uint8_t canal){
-    telem.clear();
+    pub.clear();
     if (canal==1){
-        telem["Canal1"]=canal1_status;
+        pub["Canal1"]=canal1_status;
     }
     if (canal==2){
-        telem["Canal2"]=canal2_status;
+        pub["Canal2"]=canal2_status;
     }    
-    send_pub();
+    send_pub(TELEMETRY);
+}
+
+void publica_atributos(void){
+    if (flag_push_att){
+        flag_push_att=0;
+        pub.clear();
+        //--Atributos comunes
+        pub["ssid"]=ssid;
+        pub["Area"]=area;
+        pub["Ubicacion"]=ubicacion;
+        pub["FVersion"]=fversion;
+        //--Atributos del dispositivo
+        //pub["Tmax"]=tmax;
+        //pub["Tmin"]=tmin;
+        //pub["Hmax"]=hmax;
+        //pub["Hmin"]=hmin;
+        //pub["Gain"]=gain;
+        //pub["Offset"]=offset;
+        //......
+        send_pub(ATTRIBUTES);
+    }
 }

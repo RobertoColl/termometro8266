@@ -31,6 +31,8 @@ extern uint32_t area_eeprom_pos;
 extern uint8_t canal1_status;
 extern uint8_t canal2_status;
 extern uint8_t flag_push;
+extern const char * topic_attributes;
+extern uint8_t flag_push_att;
 
 
 //--Variables locales
@@ -39,6 +41,8 @@ String topic_rpc_req;
 String msg_rpc_req;
 const char* comando_rpc;
 const char* parametro_rpc;
+uint8_t t_max;
+uint8_t t_min;
 String valor;
 String parametro;
 String comando;
@@ -52,8 +56,7 @@ void rpc_proc(char* topic, byte* payload, unsigned int length){
     payload[length] = '\0';
     topic_rpc_req = String((char*)topic);
     msg_rpc_req = String((char*)payload);
-    topic_rpc_rta="v1/devices/me/rpc/response/"+topic_rpc_req.substring(26);
-    //--Debug
+    //--Debug de mensaje de entrada
     //Serial.print("Topico de pregunta:");Serial.println(topic_rpc_req);
     //Serial.print("Mensaje de pregunta:");Serial.println(msg_rpc_req);
     //Serial.print("Topico de respuesta:");Serial.println(topic_rpc_rta);
@@ -66,6 +69,31 @@ void rpc_proc(char* topic, byte* payload, unsigned int length){
         Serial.println(error.f_str());
         return;
     }
+
+    //--Gestion de atributos
+    if (topic_rpc_req==topic_attributes){
+        //Serial.print("Topico de pregunta:");Serial.println(topic_rpc_req);
+        Serial.print("Mensaje de pregunta:");Serial.println(msg_rpc_req);
+        if (parse_payload.containsKey("Tmax")) {
+            t_max=parse_payload["Tmax"];
+            Serial.println(t_max);
+        }else if (parse_payload.containsKey("Tmin")) {
+            t_min=parse_payload["Tmin"];
+            Serial.println(t_min);
+        }
+
+        //--Grabar en eeprom TODO: gestion de eeprom para Tmax y Tmin
+        write_vars();
+
+        //--Publicar atributos 
+        publica_atributos();
+        return;
+
+    }
+
+    //--Gestion de RPC
+    topic_rpc_rta="v1/devices/me/rpc/response/"+topic_rpc_req.substring(26);
+
     //--comando
     comando_rpc=parse_payload["method"];
 
@@ -81,7 +109,6 @@ void rpc_proc(char* topic, byte* payload, unsigned int length){
     //Serial.print("Valor:");Serial.println(valor);
 
     comando=(String)comando_rpc;
-    //json_out[0]='\0';
     out.clear();
 
     //--Switch de los comandos
@@ -120,9 +147,9 @@ void rpc_proc(char* topic, byte* payload, unsigned int length){
     else if(comando=="push"){
         rpc_push();
     }
-    /*else if(comando=="getonline"){
-        rpc_getonline();
-    }*/
+    else if(comando=="read_att"){
+        rpc_readatt();
+    }
     else{
         rpc_unknown(comando);
     }
@@ -135,7 +162,7 @@ void send_rpc_rta(void){
 
 //------------------------------Comandos RPC----------------------------------------
 void rpc_help(void){
-    out["comandos"]="read, param, set, update, reset, ident, ip, ver";
+    out["comandos"]="read, read_att, param, set, update, reset, ident, ip, ver";
     send_rpc_rta();
 }
 
@@ -213,6 +240,8 @@ void rpc_set(String parametro,String valor){
     if (parametro=="ssid"){
         ssid=valor;
         out["ssid"]=valor;
+        flag_push_att=1;
+        publica_atributos();
     }
     else if (parametro=="ssid_pass"){
         ssid_pass=valor;
@@ -233,14 +262,18 @@ void rpc_set(String parametro,String valor){
     else if (parametro=="ubicacion"){
         ubicacion=valor;
         out["Ubicacion"]=valor;
+        flag_push_att=1;
+        publica_atributos();
     }
     else if (parametro=="fuota"){
         fuota_server=valor;
         out["fuota_server"]=valor;
     }
-    else if (parametro=="area"){
+    else if (parametro=="Area"){
         area=valor;
         out["Area"]=valor;
+        flag_push_att=1;
+        publica_atributos();
     }
     //Cambia estado de canales
     else if (parametro=="canal1"){
@@ -264,6 +297,7 @@ void rpc_set(String parametro,String valor){
             out["Canal 2"]="Apagado";
         }
     }
+    //--validar parametro
     write_vars();
     read_vars(0);
     send_rpc_rta();
@@ -285,15 +319,20 @@ void rpc_ip(void){
 
 void rpc_push(void){
     flag_push=1;
-    out["Push"]="enviado";
-    out["Valor"]=0;
+    out["Push"]="Enviando Telemetria";
+    //out["Valor"]=0;
     send_rpc_rta();
+    publica_medicion();
 }
 
-/*void rpc_getonline(void){
-    out["value"]=(client.connected() ? "true":"false");
+void rpc_readatt(){
+    out["ssid"]=ssid;
+    out["Area"]=area;
+    out["Ubicacion"]=ubicacion;
+    out["Version firmware"]=fversion;
     send_rpc_rta();
-}*/
+    //publica_atributos();
+}
 
 void rpc_unknown(String comando){
     out["Desconocido"]=comando;

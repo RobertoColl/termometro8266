@@ -12,6 +12,10 @@ extern String ssid;
 extern String ubicacion;
 extern String area;
 extern String fversion;
+extern float tmax;
+extern float tmin; 
+extern float offset; 
+extern float gain; 
 
 //--Variables locales
 uint16_t cont_int_pub=0;
@@ -68,8 +72,10 @@ void publica_atributos(void){
         pub["Ubicacion"]=ubicacion;
         pub["FVersion"]=fversion;
         //--Atributos del dispositivo
-        //pub["Tmax"]=tmax;
-        //pub["Tmin"]=tmin;
+        pub["Tmax"]=tmax;
+        pub["Tmin"]=tmin;
+        pub["Offset"]=offset;
+        pub["Gain"]=gain;
         //pub["Hmax"]=hmax;
         //pub["Hmin"]=hmin;
         //pub["Gain"]=gain;

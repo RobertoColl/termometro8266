@@ -33,6 +33,10 @@ extern uint8_t canal2_status;
 extern uint8_t flag_push;
 extern const char * topic_attributes;
 extern uint8_t flag_push_att;
+extern float tmax;
+extern float tmin;
+extern float offset;
+extern float gain;
 
 
 //--Variables locales
@@ -41,8 +45,6 @@ String topic_rpc_req;
 String msg_rpc_req;
 const char* comando_rpc;
 const char* parametro_rpc;
-uint8_t t_max;
-uint8_t t_min;
 String valor;
 String parametro;
 String comando;
@@ -71,24 +73,22 @@ void rpc_proc(char* topic, byte* payload, unsigned int length){
     }
 
     //--Gestion de atributos
+    //--Acá entran los cambios realizados desde widget update shared attributes
     if (topic_rpc_req==topic_attributes){
-        //Serial.print("Topico de pregunta:");Serial.println(topic_rpc_req);
-        Serial.print("Mensaje de pregunta:");Serial.println(msg_rpc_req);
+        //Serial.print("Mensaje de pregunta:");Serial.println(msg_rpc_req);
         if (parse_payload.containsKey("Tmax")) {
-            t_max=parse_payload["Tmax"];
-            Serial.println(t_max);
+            tmax=parse_payload["Tmax"];
+            //Serial.println(tmax);
         }else if (parse_payload.containsKey("Tmin")) {
-            t_min=parse_payload["Tmin"];
-            Serial.println(t_min);
+            tmin=parse_payload["Tmin"];
+            //Serial.println(tmin);
         }
-
-        //--Grabar en eeprom TODO: gestion de eeprom para Tmax y Tmin
+        //--Grabar en eeprom 
         write_vars();
-
         //--Publicar atributos 
+        flag_push_att=1;
         publica_atributos();
         return;
-
     }
 
     //--Gestion de RPC
@@ -147,7 +147,7 @@ void rpc_proc(char* topic, byte* payload, unsigned int length){
     else if(comando=="push"){
         rpc_push();
     }
-    else if(comando=="read_att"){
+    else if(comando=="read_att"){//todo: discriminar entre att comunes y de tipo de dispositivo
         rpc_readatt();
     }
     else{
@@ -224,6 +224,18 @@ void rpc_param(String parametro){
     else if (parametro=="area"){
         out["Area"]=area;
     }
+    else if (parametro=="Tmax"){
+        out["Tmax"]=tmax;
+    }
+    else if (parametro=="Tmin"){
+        out["Tmin"]=tmin;
+    }
+    else if (parametro=="Offset"){
+        out["Offset"]=offset;
+    }    
+    else if (parametro=="Gain"){
+        out["Gain"]=gain;
+    }
     else if (parametro=="canal1"){
         out["Canal 1"]=canal1_status==1 ? "Encendido":"Apagado";
     }
@@ -272,6 +284,30 @@ void rpc_set(String parametro,String valor){
     else if (parametro=="Area"){
         area=valor;
         out["Area"]=valor;
+        flag_push_att=1;
+        publica_atributos();
+    }
+    else if (parametro=="Tmax"){
+        tmax=valor.toFloat();
+        out["Tmax"]=valor;
+        flag_push_att=1;
+        publica_atributos();
+    }
+    else if (parametro=="Tmin"){
+        tmin=valor.toFloat();
+        out["Tmin"]=valor;
+        flag_push_att=1;
+        publica_atributos();
+    }
+    else if (parametro=="Offset"){
+        offset=valor.toFloat();
+        out["Offset"]=valor;
+        flag_push_att=1;
+        publica_atributos();
+    }
+    else if (parametro=="Gain"){
+        gain=valor.toFloat();
+        out["Gain"]=valor;
         flag_push_att=1;
         publica_atributos();
     }

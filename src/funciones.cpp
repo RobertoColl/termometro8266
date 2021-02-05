@@ -11,6 +11,10 @@ extern String ubicacion;
 extern String area;
 extern String tipo_device;
 extern String fuota_server;
+extern float tmax;
+extern float tmin; 
+extern float offset; 
+extern float gain; 
 extern uint32_t device_eeprom_pos;
 extern uint32_t mqtt_server_eeprom_pos;
 extern uint32_t mqtt_tcp_str_eeprom_pos;
@@ -20,6 +24,10 @@ extern uint32_t ssid_passwd_eeprom_pos;
 extern uint32_t ubicacion_eeprom_pos;
 extern uint32_t fuota_eeprom_pos;
 extern uint32_t area_eeprom_pos;
+extern uint32_t tmax_eeprom_pos;
+extern uint32_t tmin_eeprom_pos;
+extern uint32_t offset_eeprom_pos;
+extern uint32_t gain_eeprom_pos;
 extern uint32_t canal1_eeprom_pos;
 extern uint32_t canal2_eeprom_pos;
 extern uint8_t canal1_status;
@@ -67,6 +75,10 @@ void factory_reset(void){
   write_StringEE(area_eeprom_pos, area);
   write_StringEE(canal1_eeprom_pos, String(canal1_status));
   write_StringEE(canal2_eeprom_pos, String(canal2_status));
+  write_StringEE(tmax_eeprom_pos, String(tmax));
+  write_StringEE(tmin_eeprom_pos, String(tmin));
+  write_StringEE(offset_eeprom_pos, String(offset));
+  write_StringEE(gain_eeprom_pos, String(gain));
 
   noInterrupts();
   EEPROM.commit();
@@ -85,6 +97,11 @@ void read_vars(bool ver){
   area=read_StringEE(area_eeprom_pos,25);
   canal1_status=(read_StringEE(canal1_eeprom_pos,25)).toInt();
   canal2_status=(read_StringEE(canal2_eeprom_pos,25)).toInt();
+  tmax=(read_StringEE(tmax_eeprom_pos,25)).toFloat();
+  tmin=(read_StringEE(tmin_eeprom_pos,25)).toFloat();
+  offset=(read_StringEE(offset_eeprom_pos,25)).toFloat();
+  gain=(read_StringEE(gain_eeprom_pos,25)).toFloat();
+
   mqtt_tcp=mqtt_tcp_str.toInt();
   if(ver){
     Serial.println("");
@@ -99,6 +116,10 @@ void read_vars(bool ver){
     Serial.print("Area:");Serial.println(area);
     Serial.print("Canal1:");Serial.println(canal1_status);
     Serial.print("Canal2:");Serial.println(canal2_status);
+    Serial.print("Tmax:");Serial.println(tmax);
+    Serial.print("Tmin:");Serial.println(tmin);
+    Serial.print("Offset:");Serial.println(offset);
+    Serial.print("Gain:");Serial.println(gain);
   }
 }
 
@@ -144,6 +165,22 @@ void write_vars(void){
   res = write_StringEE(canal2_eeprom_pos, String(canal2_status));
   check_error_updating(res);
   canal2_status=(read_StringEE(canal2_eeprom_pos,25)).toInt();
+
+  res = write_StringEE(tmax_eeprom_pos, String(tmax));
+  check_error_updating(res);
+  tmax=(read_StringEE(tmax_eeprom_pos,25)).toFloat();
+
+  res = write_StringEE(tmin_eeprom_pos, String(tmin));
+  check_error_updating(res);
+  tmin=(read_StringEE(tmin_eeprom_pos,25)).toFloat();
+
+  res = write_StringEE(offset_eeprom_pos, String(offset));
+  check_error_updating(res);
+  offset=(read_StringEE(offset_eeprom_pos,25)).toFloat();
+
+  res = write_StringEE(gain_eeprom_pos, String(gain));
+  check_error_updating(res);
+  gain=(read_StringEE(gain_eeprom_pos,25)).toFloat();
 
   noInterrupts();
   EEPROM.commit();

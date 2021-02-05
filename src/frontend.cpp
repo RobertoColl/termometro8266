@@ -19,7 +19,10 @@ extern String ssid_pass;
 extern String passwd_AP;
 extern String fuota_server;
 extern String area;
-  
+extern float tmax;
+extern float tmin; 
+extern float offset;
+extern float gain;
 
 //------Páginas web-------------------------------------------------------
 
@@ -206,6 +209,22 @@ void handle_config() {
       <div class='form-group'>\
        <label for='area'>Area</label>\
        <input type='text' class='form-control' name='area' id='area' value='" + area + "'>\
+      </div>\
+      <div class='form-group'>\
+       <label for='tma'>Tmax</label>\
+       <input type='text' class='form-control' name='tmax' id='tmax' value='" + tmax + "'>\
+      </div>\
+      <div class='form-group'>\
+       <label for='tmi'>Tmin</label>\
+       <input type='text' class='form-control' name='tmin' id='tmin' value='" + tmin + "'>\
+      </div>\
+      <div class='form-group'>\
+       <label for='of'>Offset</label>\
+       <input type='text' class='form-control' name='offset' id='offset' value='" + offset + "'>\
+      </div>\
+      <div class='form-group'>\
+       <label for='ga'>Ganancia</label>\
+       <input type='text' class='form-control' name='gain' id='gain' value='" + gain + "'>\
       </div>\
      </div>\
      <div class='form-group'>\

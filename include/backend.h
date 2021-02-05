@@ -9,6 +9,9 @@
 #include "funciones.h"
 #include "actuacion.h"
 
+/*======================================[macros y definiciones]============================================*/
+#define TRYS_LOAD_FILES               3   //Cantidad de intentos de carga de archivos pedidos por el browser
+
 void init_webserver(void);
 void auth(void);
 void handle_funciones(void);

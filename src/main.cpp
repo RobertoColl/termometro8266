@@ -13,11 +13,12 @@
 // Info:    Template para sistema de monitoreo sobre hardware Termometro_8266 V1.0
 //            
 //          
-// TODO:  gestion de eeprom para Tmax y Tmin
+// TODO:  gestion de offset y gain
 //        gestion del rango, 
 //        gestion de medicion
+//        discriminar entre att comunes y de tipo de dispositivo en comando rpc->read_att (hacer read_att_com y read_att_dev)
 //
-// commit: gestion de atributos
+// commit: gestion de eeprom para Tmax y Tmin, gestion de offset y gain, frontend/backend tmax, tmin, offset y gain
 //
 // Para subir FileSystem: platformio run --target uploadfs
 
@@ -61,6 +62,10 @@ uint32_t fuota_eeprom_pos         =   210;
 uint32_t area_eeprom_pos          =   240;
 uint32_t canal1_eeprom_pos        =   270;
 uint32_t canal2_eeprom_pos        =   300;
+uint32_t tmax_eeprom_pos          =   330;
+uint32_t tmin_eeprom_pos          =   360;
+uint32_t offset_eeprom_pos        =   390;
+uint32_t gain_eeprom_pos          =   420;
 
 /*===================[Variables de Factory reset]================================*/
 String device                     =   "terinfssp01";
@@ -74,6 +79,10 @@ String area                       =   "Informatica";
 String ubicacion                  =   "Sala Servidores";
 uint8_t canal1_status             =   0;
 uint8_t canal2_status             =   0;
+float tmax                        =   10;
+float tmin                        =   2;
+float offset                      =   0;
+float gain                        =   1;
 
 /*===================[Variables harcodeadas]=====================================*/
 String www_username               =   "admin";

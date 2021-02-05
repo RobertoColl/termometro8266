@@ -18,9 +18,13 @@ extern String header;
 extern uint8_t canal1_status;
 extern uint8_t canal2_status;
 extern uint8_t flag_push_att;
+extern float tmax;
+extern float tmin; 
+extern float offset;
+extern float gain;
 
 //--Variables locales
-int trys_load_files=3;   //Cantidad de intentos de carga de archivos pedidos por el browser
+//int trys_load_files=3;   //Cantidad de intentos de carga de archivos pedidos por el browser
 File file_funciones,file_bs_css,file_bs_js,file_jq,file_font,file_estilo;
 
 
@@ -68,6 +72,10 @@ void handleUpdateSettings(){
   ssid_pass=web_server.arg("ssid_pass");
   ubicacion=web_server.arg("ubic");
   area=web_server.arg("area");
+  tmax=(web_server.arg("tmax")).toFloat();
+  tmin=(web_server.arg("tmin")).toFloat();
+  offset=(web_server.arg("offset")).toFloat();
+  gain=(web_server.arg("gain")).toFloat();
 
   write_vars();
   flag_push_att=1;
@@ -126,7 +134,7 @@ void handle_canal(void){
 //-- Archivos servidos
 
 void handle_funciones(void){
-  for (int idx=1;idx<=trys_load_files;idx++){
+  for (int idx=1;idx<=TRYS_LOAD_FILES;idx++){
      file_funciones = LittleFS.open("/js/funciones.js", "r");
      if (!file_funciones) {
         Serial.print("Fallo carga funciones! ");
@@ -141,7 +149,7 @@ void handle_funciones(void){
 }
 
 void handle_estilo(void){
-  for (int idx=1;idx<=trys_load_files;idx++){
+  for (int idx=1;idx<=TRYS_LOAD_FILES;idx++){
      file_estilo = LittleFS.open("/css/miestilo.css", "r");
      if (!file_estilo) {
         Serial.print("Fallo carga estilo CSS! ");
@@ -156,7 +164,7 @@ void handle_estilo(void){
 }
 
 void handle_bootstrap_css(void){
-  for (int idx=1;idx<=trys_load_files;idx++){
+  for (int idx=1;idx<=TRYS_LOAD_FILES;idx++){
      file_bs_css = LittleFS.open("/css/bootstrap.min.css.gz", "r");
      if (!file_bs_css) {
         Serial.print("Fallo carga Booststrap CSS! ");
@@ -171,7 +179,7 @@ void handle_bootstrap_css(void){
 }
 
 void handle_bootstrap_js(void){
-  for (int idx=1;idx<=trys_load_files;idx++){
+  for (int idx=1;idx<=TRYS_LOAD_FILES;idx++){
      file_bs_js = LittleFS.open("/js/bootstrap.min.js.gz", "r");
      if (!file_bs_js) {
         Serial.print("Fallo carga Booststrap JS! ");
@@ -186,7 +194,7 @@ void handle_bootstrap_js(void){
 }
 
 void handle_jquery(void){
-  for (int idx=1;idx<=trys_load_files;idx++){
+  for (int idx=1;idx<=TRYS_LOAD_FILES;idx++){
      file_jq = LittleFS.open("/js/jquery.min.js.gz", "r");
      if (!file_jq) {
         Serial.print("Fallo carga jquery! ");
@@ -201,7 +209,7 @@ void handle_jquery(void){
 }
 /*
 void handle_glicons(){
-  for (int idx=1;idx<=trys_load_files;idx++){
+  for (int idx=1;idx<=TRYS_LOAD_FILES;idx++){
      file_gli = SPIFFS.open("/fonts/glyphicons.woff2", "r");
      if (!file_gli) {
         Serial.print("Fallo carga de los iconos! ");
@@ -216,7 +224,7 @@ void handle_glicons(){
 }*/
 
 void handle_font(void){
-  for (int idx=1;idx<=trys_load_files;idx++){
+  for (int idx=1;idx<=TRYS_LOAD_FILES;idx++){
      file_font = LittleFS.open("/fonts/montserrat.woff2", "r");
      if (!file_font) {
         Serial.print("Fallo carga de la fuente! ");

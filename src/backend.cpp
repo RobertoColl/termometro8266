@@ -22,6 +22,9 @@ extern float tmax;
 extern float tmin; 
 extern float offset;
 extern float gain;
+extern uint8_t sensor;
+extern float temperatura;
+extern float tempinst;
 
 //--Variables locales
 //int trys_load_files=3;   //Cantidad de intentos de carga de archivos pedidos por el browser
@@ -76,6 +79,7 @@ void handleUpdateSettings(){
   tmin=(web_server.arg("tmin")).toFloat();
   offset=(web_server.arg("offset")).toFloat();
   gain=(web_server.arg("gain")).toFloat();
+  sensor=(web_server.arg("sensor")).toInt();
 
   write_vars();
   flag_push_att=1;
@@ -107,7 +111,7 @@ void handleUpdateSettings(){
 void handle_refresh(){
   String estados;
   auth();
-  estados=String(canal1_status)+","+String(canal2_status);
+  estados=String(canal1_status)+","+String(canal2_status)+","+String(tempinst)+","+String(temperatura);
   web_server.send(200,"text/html",estados);
 }
 

@@ -30,8 +30,10 @@ extern uint32_t offset_eeprom_pos;
 extern uint32_t gain_eeprom_pos;
 extern uint32_t canal1_eeprom_pos;
 extern uint32_t canal2_eeprom_pos;
+extern uint32_t sensor_eeprom_pos;
 extern uint8_t canal1_status;
 extern uint8_t canal2_status;
+extern uint8_t sensor;
 
 
 //--Muestra los archivos en el FS
@@ -79,6 +81,7 @@ void factory_reset(void){
   write_StringEE(tmin_eeprom_pos, String(tmin));
   write_StringEE(offset_eeprom_pos, String(offset));
   write_StringEE(gain_eeprom_pos, String(gain));
+  write_StringEE(sensor_eeprom_pos, String(sensor));
 
   noInterrupts();
   EEPROM.commit();
@@ -101,6 +104,7 @@ void read_vars(bool ver){
   tmin=(read_StringEE(tmin_eeprom_pos,25)).toFloat();
   offset=(read_StringEE(offset_eeprom_pos,25)).toFloat();
   gain=(read_StringEE(gain_eeprom_pos,25)).toFloat();
+  sensor=(read_StringEE(sensor_eeprom_pos,25)).toInt();
 
   mqtt_tcp=mqtt_tcp_str.toInt();
   if(ver){
@@ -120,6 +124,7 @@ void read_vars(bool ver){
     Serial.print("Tmin:");Serial.println(tmin);
     Serial.print("Offset:");Serial.println(offset);
     Serial.print("Gain:");Serial.println(gain);
+    Serial.print("Sensor:");Serial.println(sensor);
   }
 }
 
@@ -181,6 +186,10 @@ void write_vars(void){
   res = write_StringEE(gain_eeprom_pos, String(gain));
   check_error_updating(res);
   gain=(read_StringEE(gain_eeprom_pos,25)).toFloat();
+
+  res = write_StringEE(sensor_eeprom_pos, String(sensor));
+  check_error_updating(res);
+  sensor=(read_StringEE(sensor_eeprom_pos,25)).toInt();
 
   noInterrupts();
   EEPROM.commit();

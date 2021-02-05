@@ -28,6 +28,8 @@ function refresh(){
       if (state[0]=='0'){document.getElementById('stc1').innerHTML='Apagado';}
       if (state[1]=='1'){document.getElementById('stc2').innerHTML='Encendido';}
       if (state[1]=='0'){document.getElementById('stc2').innerHTML='Apagado';}
+      document.getElementById('ti').innerHTML=state[2];
+      document.getElementById('tp').innerHTML=state[3];
     }
   };
   xhttp.open('GET', 'refresh', true);

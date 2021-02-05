@@ -37,6 +37,9 @@ extern float tmax;
 extern float tmin;
 extern float offset;
 extern float gain;
+extern uint8_t sensor;
+extern float tempinst;
+extern float temperatura;
 
 
 //--Variables locales
@@ -167,7 +170,8 @@ void rpc_help(void){
 }
 
 void rpc_read(void){
-    out["Valor"]=0;
+    out["Ti:"]=tempinst;
+    out["Tp:"]=temperatura;
     send_rpc_rta();
 }
 
@@ -235,6 +239,9 @@ void rpc_param(String parametro){
     }    
     else if (parametro=="Gain"){
         out["Gain"]=gain;
+    }
+    else if (parametro=="Sensor"){
+        out["Sensor"]=sensor;
     }
     else if (parametro=="canal1"){
         out["Canal 1"]=canal1_status==1 ? "Encendido":"Apagado";
@@ -308,6 +315,12 @@ void rpc_set(String parametro,String valor){
     else if (parametro=="Gain"){
         gain=valor.toFloat();
         out["Gain"]=valor;
+        flag_push_att=1;
+        publica_atributos();
+    }
+    else if (parametro=="Sensor"){
+        sensor=valor.toFloat();
+        out["Sensor"]=valor;
         flag_push_att=1;
         publica_atributos();
     }

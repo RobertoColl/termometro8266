@@ -13,12 +13,11 @@
 // Info:    Template para sistema de monitoreo sobre hardware Termometro_8266 V1.0
 //            
 //          
-// TODO:  gestion de offset y gain
-//        gestion del rango, 
-//        gestion de medicion
+// TODO:  gestion del rango (publicarlo como telemetria), 
 //        discriminar entre att comunes y de tipo de dispositivo en comando rpc->read_att (hacer read_att_com y read_att_dev)
+//        add comando estadistica de medicion
 //
-// commit: gestion de eeprom para Tmax y Tmin, gestion de offset y gain, frontend/backend tmax, tmin, offset y gain
+// commit: gestion de medicion, refresco medicion en frontend
 //
 // Para subir FileSystem: platformio run --target uploadfs
 
@@ -66,6 +65,7 @@ uint32_t tmax_eeprom_pos          =   330;
 uint32_t tmin_eeprom_pos          =   360;
 uint32_t offset_eeprom_pos        =   390;
 uint32_t gain_eeprom_pos          =   420;
+uint32_t sensor_eeprom_pos        =   450;
 
 /*===================[Variables de Factory reset]================================*/
 String device                     =   "terinfssp01";
@@ -83,6 +83,7 @@ float tmax                        =   10;
 float tmin                        =   2;
 float offset                      =   0;
 float gain                        =   1;
+uint8_t sensor                    =   1;
 
 /*===================[Variables harcodeadas]=====================================*/
 String www_username               =   "admin";
@@ -102,7 +103,7 @@ String hversion                   =   "1.0.0";      //en PCB Termometro 1.0
 /*===================[Variables globales]========================================*/
 String topic_dev_status;
 uint16_t mqtt_tcp;
-uint8_t mqtt_conn_timeout=0;      //timeout de la conexion al broker en segundos
+//uint8_t mqtt_conn_timeout=0;      //timeout de la conexion al broker en segundos
 uint8_t wifi_conn_timeout=0;      //timeout de la conexion al broker en segundos
 uint8_t flag_seg=0;
 uint8_t flag_wifi=0;

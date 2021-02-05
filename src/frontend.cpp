@@ -23,6 +23,8 @@ extern float tmax;
 extern float tmin; 
 extern float offset;
 extern float gain;
+extern float tempinst;
+extern float temperatura;
 
 //------Páginas web-------------------------------------------------------
 
@@ -122,14 +124,14 @@ void handle_estado() {
      <div class='well'><h2 class='text-center'>Mediciones</h2><p>\
       <label for='vi'>Valores instantáneos</label><p>\
       Temperatura\
-      <span class='text-primary' id='ti'>20 ºC</span><p>\
+      <span class='text-primary' id='ti'>"+ tempinst +"</span> ºC<p>\
       Humedad\
       <span class='text-primary' id='hi'>50 %</span><p>\
       Nivel\
       <span class='text-primary' id='ni'>12 m</span><p>\
       <label for='vp'>Valores Promedio</label><p>\
       Temperatura\
-      <span class='text-primary' id='tp'>20 ºC</span><p>\
+      <span class='text-primary' id='tp'>"+temperatura+" ºC</span><p>\
       Humedad\
       <span class='text-primary' id='hp'>50 %</span><p>\
       Nivel\
@@ -217,6 +219,14 @@ void handle_config() {
       <div class='form-group'>\
        <label for='tmi'>Tmin</label>\
        <input type='text' class='form-control' name='tmin' id='tmin' value='" + tmin + "'>\
+      </div>\
+      <div class='form-group'>\
+       <label for='sen'>Sensor</label>\
+       <select name='sensor' id='sensor'>\
+        <option value=1>TC1047</option>\
+        <option value=2>LM35</option>\
+        <option value=3>DHT22</option>\
+       </select>\
       </div>\
       <div class='form-group'>\
        <label for='of'>Offset</label>\

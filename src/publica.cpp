@@ -16,6 +16,9 @@ extern float tmax;
 extern float tmin; 
 extern float offset; 
 extern float gain; 
+extern float temperatura;
+extern uint8_t sensor;
+extern uint8_t flag_publica;
 
 //--Variables locales
 uint16_t cont_int_pub=0;
@@ -42,11 +45,12 @@ void send_pub(int topico){
 }
 
 void publica_medicion(void){
-    if (cont_int_pub>=INTERV_PUB||flag_push==1){
+    if (flag_publica||flag_push==1){
         pub.clear();
         flag_push=0;
-        cont_int_pub=0;
-        pub["Temperatura"]=random(20,30);//sólo para testing
+        flag_publica=0;
+        //cont_int_pub=0;
+        pub["Temperatura"]=temperatura;
         send_pub(TELEMETRY);
     }
 }
@@ -76,6 +80,7 @@ void publica_atributos(void){
         pub["Tmin"]=tmin;
         pub["Offset"]=offset;
         pub["Gain"]=gain;
+        pub["Sensor"]=sensor;
         //pub["Hmax"]=hmax;
         //pub["Hmin"]=hmin;
         //pub["Gain"]=gain;

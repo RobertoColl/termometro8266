@@ -13,11 +13,17 @@
 // Info:    Template para sistema de monitoreo sobre hardware Termometro_8266 V1.0
 //            
 //          
-// TODO:  gestion del rango (publicarlo como telemetria), 
-//        discriminar entre att comunes y de tipo de dispositivo en comando rpc->read_att (hacer read_att_com y read_att_dev)
-//        add comando estadistica de medicion
+// TODO:  
+//          discriminar entre att comunes y de tipo de dispositivo en comando rpc->read_att (hacer read_att_com y read_att_dev)
+//          add comando estadistica de medicion
+//        
 //
-// commit: gestion de medicion, refresco medicion en frontend
+// BUGS:    Al finalizar identificacion no vuelve el led wifi a su estado anterior
+//          No graba nombre desde portal cautivo
+//          Agregar al comando '?' los comandos faltantes.
+//          No publica atributos en el inicio-> colocar flag_push_att=1 en setup()
+//
+// COMMIT:  git commit -m 'correccion parpadeo led mqtt, gestion del rango'
 //
 // Para subir FileSystem: platformio run --target uploadfs
 
@@ -66,6 +72,8 @@ uint32_t tmin_eeprom_pos          =   360;
 uint32_t offset_eeprom_pos        =   390;
 uint32_t gain_eeprom_pos          =   420;
 uint32_t sensor_eeprom_pos        =   450;
+uint32_t fuota_version_eeprom_pos =   480;
+uint32_t flag_update_eeprom_pos   =   500;
 
 /*===================[Variables de Factory reset]================================*/
 String device                     =   "terinfssp01";
@@ -99,6 +107,7 @@ uint8_t MAX_live_timeout_mqtt     =   5;  //timeout en minutos de desaparicion d
 //-- Versiones
 String fversion                   =   "2.0.0";          
 String hversion                   =   "1.0.0";      //en PCB Termometro 1.0
+float  hist_rango                 =    0.5;         //histeresis en grados para la determinacion del rango
 
 /*===================[Variables globales]========================================*/
 String topic_dev_status;
@@ -121,6 +130,7 @@ ESP8266WebServer web_server (PORT_WEB_SERVER);
 
 void setup() {
   Serial.begin(SERIAL_BAUDRATE);
+  //Serial.setDebugOutput(true);
   delay(100);
   //--Configuración interrupción por timer
   noInterrupts();
@@ -140,7 +150,7 @@ void setup() {
   pinMode(FRESET,INPUT);
   if (digitalRead(FRESET)){
     Serial.println("\r\nFactory reset!!");
-    //factory_reset();
+    factory_reset();
   }
   read_vars(1);  
   
@@ -173,6 +183,7 @@ void setup() {
 
   //--Webserver y FS
   init_webserver();
+  Serial.println(ESP.getFreeSketchSpace());
 }
 
 void loop() {
@@ -185,6 +196,7 @@ void loop() {
   }
   web_server.handleClient();
   medicion();
+  rango(LED_RANGO);
   delay(100);
 }
 

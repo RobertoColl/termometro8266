@@ -23,6 +23,7 @@
 #define MQTT_CONNECTED_STATE                1
 #define MQTT_MAX_RETRY_STATE                2
 #define MQTT_WAIT_STATE                     3
+#define MAX_COUNT_DELAY_LED                 10
 
 
 
@@ -41,6 +42,7 @@ class MCC_mqtt{
         uint8_t _mqtt_conn_retrys;
         const char* _ca_cert;
         uint8_t _flag_start_timeout_live_mqtt=0;
+        uint8_t _countDelayLed=0;
         void _setLed(void);
         void _pubBlinkMqttLed();
 

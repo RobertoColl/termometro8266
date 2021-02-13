@@ -25,7 +25,7 @@ void MCC_mqtt::init(const char * server, uint16_t port_server, const char * devi
     this->_will_mess=will_mess;
     this->_topic_sub=topic_sub;
     this->_led=led;
-    this->_ca_cert=\
+    /*this->_ca_cert=\
                     "-----BEGIN CERTIFICATE-----\n" \
                     "MIIDtjCCAp6gAwIBAgIEJX4o1jANBgkqhkiG9w0BAQsFADB4MQswCQYDVQQGEwJB\n" \
                     "UjEQMA4GA1UECBMHU2FudGFGZTEQMA4GA1UEBxMHUm9zYXJpbzEWMBQGA1UEChMN\n" \
@@ -47,7 +47,7 @@ void MCC_mqtt::init(const char * server, uint16_t port_server, const char * devi
                     "0yZqJGLMjGsXQ79P2lyNhLOIi1ZpLXFimPd9IiaUjQTQ8CfMhtMyYQojCAYEdWT+\n" \
                     "BGSMw5+j1fSip8MGCQuX3DnPGMNF3ZDVpNeGp93b06PPt/Dt5R1991s6Hsy+5cWN\n" \
                     "4ZjfMf4ltJXv624Q3bpkA/LDtZ75NQUaSazHQJL3YeLlQvnQqBhTLpL/\n" \
-                    "-----END CERTIFICATE-----\n";
+                    "-----END CERTIFICATE-----\n";*/
     //LittleFS.begin();
     File cert = LittleFS.open("/mqttserver.der", "r");
     if (!cert) {
@@ -265,8 +265,14 @@ void MCC_mqtt::_setLed(void){
     int i;
     switch(_flag_mqtt){
         case MQTT_CONNECTED_STATE:
-            digitalWrite(_led, !digitalRead(_led));
-            delay(LONG_DELAY_MQTT_LED);
+            //digitalWrite(_led, !digitalRead(_led));
+            _countDelayLed++;
+            if (_countDelayLed>MAX_COUNT_DELAY_LED){
+                _countDelayLed=0;
+                digitalWrite(_led,HIGH);
+                delay(VERY_SHORT_DELAY_MQTT_LED);
+                digitalWrite(_led,LOW);
+            }
             //flag_seg == 0 ? digitalWrite(_led,HIGH):digitalWrite(_led,LOW);//digitalWrite(LED, !digitalRead(LED));
             break;
         case MQTT_MAX_RETRY_STATE:

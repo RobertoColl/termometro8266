@@ -11,7 +11,7 @@ void bienvenida (int led1, int led2, int led3);
 void read_vars(bool ver);
 void write_vars(void);
 void factory_reset(void);
-unsigned int hexToDec(String hexString);
+//unsigned int hexToDec(String hexString);
 void check_update(void);
 
 #endif

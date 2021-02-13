@@ -31,6 +31,8 @@ extern uint32_t gain_eeprom_pos;
 extern uint32_t canal1_eeprom_pos;
 extern uint32_t canal2_eeprom_pos;
 extern uint32_t sensor_eeprom_pos;
+extern uint32_t fuota_version_eeprom_pos;
+extern uint32_t flag_update_eeprom_pos;
 extern uint8_t canal1_status;
 extern uint8_t canal2_status;
 extern uint8_t sensor;
@@ -197,7 +199,7 @@ void write_vars(void){
 }
 
 
-unsigned int hexToDec(String hexString) {
+/*unsigned int hexToDec(String hexString) {
   
   unsigned int decValue = 0;
   int nextInt;
@@ -214,21 +216,44 @@ unsigned int hexToDec(String hexString) {
   }
   
   return decValue;
+}*/
+
+void update_started() {
+  Serial.println("CALLBACK:  HTTP update process started");
 }
 
+void update_finished() {
+  Serial.println("CALLBACK:  HTTP update process finished");
+}
+
+void update_progress(int cur, int total) {
+  Serial.printf("CALLBACK:  HTTP update process at %d of %d bytes...\n", cur, total);
+}
+
+void update_error(int err) {
+  Serial.printf("CALLBACK:  HTTP update fatal error code %d\n", err);
+}
 
 void check_update(void){
-  String flag_update=read_StringEE(500,1);
+  String flag_update=read_StringEE(flag_update_eeprom_pos,1);//500
   if(flag_update=="1"){
-    String version=read_StringEE(470,25);
+    String version=read_StringEE(fuota_version_eeprom_pos,25);//470
     Serial.print("Se actualizará a la version:");
     Serial.println(version);
-    write_StringEE(500, "0");
+    write_StringEE(flag_update_eeprom_pos, "0");//500
     noInterrupts();
     EEPROM.commit();
     interrupts();
     Serial.println("Actualizando.....");
+
+ESPhttpUpdate.onStart(update_started);
+    ESPhttpUpdate.onEnd(update_finished);
+    ESPhttpUpdate.onProgress(update_progress);
+    ESPhttpUpdate.onError(update_error);
+
+    //Serial.println("http://"+fuota_server+"/updates/"+tipo_device+"/"+version+"/firmware.bin");
     t_httpUpdate_return ret=ESPhttpUpdate.update("http://"+fuota_server+"/updates/"+tipo_device+"/"+version+"/firmware.bin");
+    //auto ret=ESPhttpUpdate.update("http://"+fuota_server+"/updates/"+tipo_device+"/"+version+"/firmware.bin");
     switch(ret) {
       case HTTP_UPDATE_FAILED:
         Serial.printf("[update] Update FAILED (%d): %s\r\n", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());

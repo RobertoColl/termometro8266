@@ -13,5 +13,6 @@ void send_pub(int topico);
 void publica_medicion(void);
 void publica_canales(uint8_t canal);
 void publica_atributos(void);
+void publica_rango(void);
 
 #endif

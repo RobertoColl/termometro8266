@@ -28,6 +28,8 @@ extern uint32_t ssid_pass_eeprom_pos;
 extern uint32_t ubicacion_eeprom_pos;
 extern uint32_t fuota_eeprom_pos;
 extern uint32_t area_eeprom_pos;
+extern uint32_t fuota_version_eeprom_pos;
+extern uint32_t flag_update_eeprom_pos;
 extern uint8_t canal1_status;
 extern uint8_t canal2_status;
 extern uint8_t flag_push;
@@ -40,6 +42,7 @@ extern float gain;
 extern uint8_t sensor;
 extern float tempinst;
 extern float temperatura;
+extern uint8_t flag_rango;
 
 
 //--Variables locales
@@ -153,6 +156,9 @@ void rpc_proc(char* topic, byte* payload, unsigned int length){
     else if(comando=="read_att"){//todo: discriminar entre att comunes y de tipo de dispositivo
         rpc_readatt();
     }
+    else if (comando=="checkRango"){
+        rpc_check_rango();
+    }
     else{
         rpc_unknown(comando);
     }
@@ -182,22 +188,28 @@ void rpc_version(void){
 }
 
 void rpc_update(String version){
-    write_StringEE(470,version);
-    write_StringEE(500, "1");
+    write_StringEE(fuota_version_eeprom_pos,version);//470
+    write_StringEE(flag_update_eeprom_pos, "1");//500
+    out["Actualizando a:"]="V"+version;
+    send_rpc_rta();
     noInterrupts();
     EEPROM.commit();
     interrupts();
+    delay(100);
     ESP.reset();
 }
 
 void rpc_update(void){
-    Serial.print("sin param->");
-    Serial.println("V"+fversion);
-    write_StringEE(470,"V"+fversion);
-    write_StringEE(500, "1");
+    //Serial.print("sin param->");
+    //Serial.println("V"+fversion);
+    write_StringEE(fuota_version_eeprom_pos,"V"+fversion);//470
+    write_StringEE(flag_update_eeprom_pos, "1");//500
+    out["Actualizando a:"]="V"+fversion;
+    send_rpc_rta();
     noInterrupts();
     EEPROM.commit();
     interrupts();
+    delay(100);
     ESP.reset();
 }
 
@@ -346,7 +358,7 @@ void rpc_set(String parametro,String valor){
             out["Canal 2"]="Apagado";
         }
     }
-    //--validar parametro
+    //--TODO: validar parametro
     write_vars();
     read_vars(0);
     send_rpc_rta();
@@ -381,6 +393,12 @@ void rpc_readatt(){
     out["Version firmware"]=fversion;
     send_rpc_rta();
     //publica_atributos();
+}
+
+void rpc_check_rango(void){
+    out["outRange"]=flag_rango;
+    send_rpc_rta();
+    publica_rango();
 }
 
 void rpc_unknown(String comando){

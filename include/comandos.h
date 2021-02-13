@@ -22,5 +22,6 @@ void rpc_ip(void);
 void rpc_push(void);
 void rpc_readatt(void);
 void rpc_unknown(String comando);
+void rpc_check_rango(void);
 
 #endif

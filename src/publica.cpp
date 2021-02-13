@@ -19,6 +19,8 @@ extern float gain;
 extern float temperatura;
 extern uint8_t sensor;
 extern uint8_t flag_publica;
+extern uint8_t flag_rango;
+extern uint8_t flag_pub_rango;
 
 //--Variables locales
 uint16_t cont_int_pub=0;
@@ -53,6 +55,12 @@ void publica_medicion(void){
         pub["Temperatura"]=temperatura;
         send_pub(TELEMETRY);
     }
+}
+
+void publica_rango(void){
+    pub.clear();
+    pub["OutRange"]=flag_rango;
+    send_pub(TELEMETRY);
 }
 
 void publica_canales(uint8_t canal){

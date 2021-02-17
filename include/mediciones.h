@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include "publica.h"
+//#include "config.h"
 
 /*======================================[macros y definiciones]============================================*/
 #define TC1047                  1
@@ -17,7 +18,7 @@ void medicion(void);
 void read_analog(void);
 void promedia_analog(void);
 float calc_unidad(uint16_t valor);
-void rango(uint8_t led);
+void rango(void);
 
 
 

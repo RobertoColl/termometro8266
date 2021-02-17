@@ -37,6 +37,7 @@ extern uint8_t canal1_status;
 extern uint8_t canal2_status;
 extern uint8_t sensor;
 
+//extern WiFiClientSecure wifi_client;
 
 //--Muestra los archivos en el FS
 void ls(void){
@@ -51,24 +52,25 @@ void ls(void){
    }
 }
 
-void bienvenida(int led1,int led2,int led3){
+void bienvenida(){
   for(int i=0;i<5;i++){
-    digitalWrite(led1,HIGH);
+    digitalWrite(LED_PULSO,HIGH);
     delay(50);
-    digitalWrite(led1,LOW);
+    digitalWrite(LED_PULSO,LOW);
     delay(50);
-    digitalWrite(led2,HIGH);
+    digitalWrite(LED_WIFI,HIGH);
     delay(50);
-    digitalWrite(led2,LOW);
+    digitalWrite(LED_WIFI,LOW);
     delay(50);
-    digitalWrite(led3,HIGH);
+    digitalWrite(LED_RANGO,HIGH);
     delay(50);
-    digitalWrite(led3,LOW);
+    digitalWrite(LED_RANGO,LOW);
     delay(50);
   }
 }
+
 void factory_reset(void){
-  write_StringEE(device_eeprom_pos, device);
+  write_StringEE(device_eeprom_pos, device+String(random(1,1000))); //agrega nº random al nombre
   write_StringEE(mqtt_server_eeprom_pos, mqtt_server);
   write_StringEE(mqtt_tcp_str_eeprom_pos, mqtt_tcp_str);
   write_StringEE(passwd_AP_eeprom_pos, passwd_AP);
@@ -246,13 +248,18 @@ void check_update(void){
     interrupts();
     Serial.println("Actualizando.....");
 
-ESPhttpUpdate.onStart(update_started);
+    ESPhttpUpdate.onStart(update_started);
     ESPhttpUpdate.onEnd(update_finished);
     ESPhttpUpdate.onProgress(update_progress);
     ESPhttpUpdate.onError(update_error);
-
+    WiFiClient wf_client;
+    ESPhttpUpdate.setLedPin(LED_RANGO, LOW);
+    LittleFS.end();
+    ESP.wdtDisable();
+  
+  
     //Serial.println("http://"+fuota_server+"/updates/"+tipo_device+"/"+version+"/firmware.bin");
-    t_httpUpdate_return ret=ESPhttpUpdate.update("http://"+fuota_server+"/updates/"+tipo_device+"/"+version+"/firmware.bin");
+    t_httpUpdate_return ret=ESPhttpUpdate.update(wf_client, "http://"+fuota_server+"/updates/"+tipo_device+"/"+version+"/firmware.bin");
     //auto ret=ESPhttpUpdate.update("http://"+fuota_server+"/updates/"+tipo_device+"/"+version+"/firmware.bin");
     switch(ret) {
       case HTTP_UPDATE_FAILED:

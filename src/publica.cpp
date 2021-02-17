@@ -27,7 +27,7 @@ uint16_t cont_int_pub=0;
 StaticJsonDocument<200> pub;
 char json_pub[200];
 uint8_t flag_push=0;
-uint8_t flag_push_att=0;
+uint8_t flag_push_att=1;
 
 
 void send_pub(int topico){
@@ -91,8 +91,6 @@ void publica_atributos(void){
         pub["Sensor"]=sensor;
         //pub["Hmax"]=hmax;
         //pub["Hmin"]=hmin;
-        //pub["Gain"]=gain;
-        //pub["Offset"]=offset;
         //......
         send_pub(ATTRIBUTES);
     }

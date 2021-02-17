@@ -1,0 +1,17 @@
+17/02/2020
+ADD:
+1. Se agregaron al comando read los parametros -a y -s
+    read -a lee todos los atributos
+    read -s lee estadística de medicion
+    read (sin parametros), lee valores medidos
+2. Se agrega generacion de nro aleatorio al nombre 'device' al hacer factory reset
+
+FIX:
+1.  Agregado al comando '?' los comandos faltantes.
+2.  No publica atributos en el inicio-> inicializar flag_push_att=1 publica.cpp:30
+3.  Al finalizar identificacion no vuelve el led wifi a su estado anterior. Se lee el estado del led de wifi y se restablece luego 
+    de la identificacion. Para ello, se crea archivo config.h con los macros de harware/software para que sean visibles desde todo el proyecto. 
+
+
+
+COMMIT: add params al comando read, add nro aleatorio device, varios fixes.

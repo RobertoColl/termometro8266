@@ -15,6 +15,7 @@ uint8_t flag_prvez_alta=1;
 uint8_t flag_prvez_baja=1;
 //uint8_t flag_cambio_rango=0;
 //uint8_t flag_pub_rango=0;
+uint16_t cant_med=0;
 
 //--Variables externas
 extern uint8_t flag_publica;
@@ -29,10 +30,12 @@ extern float hist_rango;
 void medicion(void){
     if(seg_muest_an0>=MAX_SEG_MUEST_AN0){
         read_analog();
+        cant_med++;
         seg_muest_an0=0;
     }
     if (seg_prom_an0>=MAX_SEG_PROM_AN0){
         promedia_analog();
+        cant_med=0;
         seg_prom_an0=0;
         flag_publica=1;
     }
@@ -62,7 +65,7 @@ float calc_unidad(uint16_t an0_valor){
     }
 }
 
-void rango(uint8_t led){
+void rango(){
     if (tempinst>(tmax+hist_rango) || tempinst<(tmin-hist_rango)){
         if(flag_prvez_alta){
             flag_prvez_alta=0;
@@ -70,7 +73,7 @@ void rango(uint8_t led){
             flag_rango=1;
             publica_rango();  
         }
-        digitalWrite(led,HIGH);
+        digitalWrite(LED_RANGO,HIGH);
     }
     else if (tempinst<(tmax-hist_rango) && tempinst>(tmin+hist_rango)){
         if(flag_prvez_baja){
@@ -79,6 +82,6 @@ void rango(uint8_t led){
             flag_rango=0;
             publica_rango();
         }
-        digitalWrite(led,LOW);   
+        digitalWrite(LED_RANGO,LOW);   
     }
 }

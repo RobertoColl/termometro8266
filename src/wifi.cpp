@@ -80,7 +80,7 @@ uint8_t MCC_wifi::conn(void){
    }
    if(WiFi.status()==3){
       Serial.print("\r\nConectado con IP:");
-      digitalWrite(_led, HIGH);
+      //digitalWrite(_led, HIGH);
       ip_wlan=WiFi.localIP();
       Serial.println(ip_wlan);
       digitalWrite(_led,HIGH);

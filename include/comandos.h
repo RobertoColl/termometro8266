@@ -7,6 +7,7 @@
 #include "eeprom.h"
 #include "funciones.h"
 #include "actuacion.h"
+#include "config.h"
 
 void rpc_proc(char* topic, byte* payload, unsigned int length);
 void send_rpc_rta(void);

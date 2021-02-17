@@ -13,17 +13,14 @@
 // Info:    Template para sistema de monitoreo sobre hardware Termometro_8266 V1.0
 //            
 //          
-// TODO:  
-//          discriminar entre att comunes y de tipo de dispositivo en comando rpc->read_att (hacer read_att_com y read_att_dev)
-//          add comando estadistica de medicion
+// TODO:       en el factory reset dar nombre aleatorio a 'device' o con MAC
 //        
 //
-// BUGS:    Al finalizar identificacion no vuelve el led wifi a su estado anterior
+// BUGS:    
 //          No graba nombre desde portal cautivo
-//          Agregar al comando '?' los comandos faltantes.
-//          No publica atributos en el inicio-> colocar flag_push_att=1 en setup()
+//                   
 //
-// COMMIT:  git commit -m 'correccion parpadeo led mqtt, gestion del rango'
+// COMMIT:  
 //
 // Para subir FileSystem: platformio run --target uploadfs
 
@@ -38,23 +35,9 @@
 #include "frontend.h"
 #include "backend.h"
 #include "mediciones.h"
-#include "senalizacion.h"
 #include "publica.h"
+#include "config.h"
 
-/*===================[Definiciones de hardware]==================================*/
-#define CANAL1                        12    // pin salida canal 1
-#define CANAL2                        13    // pin salida canal 2
-#define LED_PULSO                     14    // led de pulso
-#define LED_WIFI                      2
-#define LED_RANGO                     16
-#define FRESET                        14    // pin para factory reset
-
-/*===================[Definiciones de software]==================================*/
-#define SERIAL_BAUDRATE               19200
-#define PORT_WEB_SERVER               80
-#define MAX_BYTE_EEPROM               512
-#define SLOT_EEPROM_VARS              30    //no implementado 
-         
 /*===================[Posicion de variables EEPROM]==============================*/
 uint32_t device_eeprom_pos        =   0;
 uint32_t mqtt_server_eeprom_pos   =   30;
@@ -76,7 +59,7 @@ uint32_t fuota_version_eeprom_pos =   480;
 uint32_t flag_update_eeprom_pos   =   500;
 
 /*===================[Variables de Factory reset]================================*/
-String device                     =   "terinfssp01";
+String device                     =   "term";               //usado como template
 String mqtt_server                =   "192.168.1.45";
 String fuota_server               =   "192.168.1.17";
 String mqtt_tcp_str               =   "8883";
@@ -102,12 +85,12 @@ uint8_t tls                       =   1;
 const char * topic_telemetry      =   "v1/devices/me/telemetry";
 const char * topic_attributes     =   "v1/devices/me/attributes";
 const char * topic_rpc            =   "v1/devices/me/rpc/request/+";
-uint8_t MAX_mqtt_conn_timeout     =   10; //timeout en segundos para la conexion al broker
-uint8_t MAX_live_timeout_mqtt     =   5;  //timeout en minutos de desaparicion de broker
+uint8_t MAX_mqtt_conn_timeout     =   10;       //timeout en segundos para la conexion al broker
+uint8_t MAX_live_timeout_mqtt     =   5;        //timeout en minutos de desaparicion de broker
+float  hist_rango                 =   0.5;      //histeresis en grados para la determinacion del rango
 //-- Versiones
 String fversion                   =   "2.0.0";          
-String hversion                   =   "1.0.0";      //en PCB Termometro 1.0
-float  hist_rango                 =    0.5;         //histeresis en grados para la determinacion del rango
+String hversion                   =   "1.0.0";  //en PCB Termometro 1.0
 
 /*===================[Variables globales]========================================*/
 String topic_dev_status;
@@ -132,6 +115,7 @@ void setup() {
   Serial.begin(SERIAL_BAUDRATE);
   //Serial.setDebugOutput(true);
   delay(100);
+
   //--Configuración interrupción por timer
   noInterrupts();
   timer0_isr_init();
@@ -165,7 +149,7 @@ void setup() {
   digitalWrite(CANAL1, LOW);
   digitalWrite(CANAL2, LOW);
   
-  bienvenida(LED_WIFI, LED_PULSO, LED_RANGO);
+  bienvenida();
 
   //--Tópicos
   topic_dev_status=device+"/status/me";
@@ -181,9 +165,14 @@ void setup() {
   broker.conn();
   broker.sub(topic_attributes);
 
-  //--Webserver y FS
+  //--Inicializacion de webserver
   init_webserver();
-  Serial.println(ESP.getFreeSketchSpace());
+
+  //--Muestra parámetros de flash
+  //Serial.print("sketch size:");Serial.println(ESP.getSketchSize ());
+  //Serial.print("free sketch:");Serial.println(ESP.getFreeSketchSpace());
+  //Serial.print("flash real size:");Serial.println(ESP.getFlashChipRealSize());
+  //Serial.print("free heap:");Serial.println(ESP.getFreeHeap());
 }
 
 void loop() {
@@ -196,7 +185,7 @@ void loop() {
   }
   web_server.handleClient();
   medicion();
-  rango(LED_RANGO);
+  rango();
   delay(100);
 }
 

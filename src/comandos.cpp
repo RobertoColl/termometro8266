@@ -43,6 +43,7 @@ extern uint8_t sensor;
 extern float tempinst;
 extern float temperatura;
 extern uint8_t flag_rango;
+extern uint16_t cant_med;
 
 
 //--Variables locales
@@ -57,6 +58,7 @@ String comando;
 int ind1;
 StaticJsonDocument<200> out;
 char json_out[200];
+uint8_t led_wifi_state;
 
 
 
@@ -70,7 +72,7 @@ void rpc_proc(char* topic, byte* payload, unsigned int length){
     //Serial.print("Topico de respuesta:");Serial.println(topic_rpc_rta);
 
     //--parseo de la payload (msg_rpc_req)
-    StaticJsonDocument<200> parse_payload;
+    StaticJsonDocument<100> parse_payload;
     DeserializationError error = deserializeJson(parse_payload, msg_rpc_req);
     if (error) {
         Serial.print("[DEBUG] deserializeJson() fallo: ");
@@ -153,9 +155,9 @@ void rpc_proc(char* topic, byte* payload, unsigned int length){
     else if(comando=="push"){
         rpc_push();
     }
-    else if(comando=="read_att"){//todo: discriminar entre att comunes y de tipo de dispositivo
-        rpc_readatt();
-    }
+    //else if(comando=="read_att"){//todo: discriminar entre att comunes y de tipo de dispositivo
+      //  rpc_readatt();
+    //}
     else if (comando=="checkRango"){
         rpc_check_rango();
     }
@@ -171,13 +173,28 @@ void send_rpc_rta(void){
 
 //------------------------------Comandos RPC----------------------------------------
 void rpc_help(void){
-    out["comandos"]="read, read_att, param, set, update, reset, ident, ip, ver";
+    out["comandos"]="read [-a -s], param, set, update, reset, ident, ip, ver, push, checkRango";
     send_rpc_rta();
 }
 
 void rpc_read(void){
-    out["Ti:"]=tempinst;
-    out["Tp:"]=temperatura;
+    if (parametro=="-s"){
+       out["Nº medicion:"]=cant_med;
+    }else if (parametro=="-a"){
+        out["ssid"]=ssid;
+        out["Area"]=area;
+        out["Ubicacion"]=ubicacion;
+        out["Version firmware"]=fversion;
+        out["Offset"]=offset;
+        out["Gain"]=gain;
+        out["Tmax"]=tmax;
+        out["Tmin"]=tmin;
+    }
+    
+    else{
+        out["Ti:"]=tempinst;
+        out["Tp:"]=temperatura;
+    }
     send_rpc_rta();
 }
 
@@ -366,10 +383,12 @@ void rpc_set(String parametro,String valor){
 
 void rpc_ident(void){
     out["Identificando"]="...";
+    led_wifi_state=digitalRead(LED_WIFI);
     send_rpc_rta();
     for(int i=0;i<5;i++){
-       bienvenida(14, 2, 16);
+       bienvenida();
     }
+    digitalWrite(LED_WIFI,led_wifi_state);
 }
 
 void rpc_ip(void){
@@ -386,14 +405,18 @@ void rpc_push(void){
     publica_medicion();
 }
 
-void rpc_readatt(){
+/*void rpc_readatt(){
     out["ssid"]=ssid;
     out["Area"]=area;
     out["Ubicacion"]=ubicacion;
     out["Version firmware"]=fversion;
+    out["Offset"]=offset;
+    out["Gain"]=gain;
+    out["Tmax"]=tmax;
+    out["Tmin"]=tmin;
     send_rpc_rta();
     //publica_atributos();
-}
+}*/
 
 void rpc_check_rango(void){
     out["outRange"]=flag_rango;

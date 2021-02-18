@@ -1,4 +1,4 @@
-17/02/2020
+17/02/2021
 ADD:
 1. Se agregaron al comando read los parametros -a y -s
     read -a lee todos los atributos
@@ -15,3 +15,19 @@ FIX:
 
 
 COMMIT: add params al comando read, add nro aleatorio device, varios fixes.
+Nro:    15aec1cc63182f782d131c15c55c3149cace0104
+
+//--------------------------------------------------------------------------------------------------------
+18/02/2021
+
+FIX: 
+1.  No actualiza via OTA. Se movió el bloque de configuración de la interrupción por timer al final de la función setup(), de manera 
+    que la función check_update() no se ejecute con el timer en funcionamiento.
+2.  Factory reset cuando tiene fuente externa. Agregado de delay a la detección de FR. Se mueve todo el código a la función 
+    factory_reset() en funciones.cpp. Se mueve el código de seteo de modos de pines adelante de la función factory_reset().
+
+ADD:
+1.  Indicador de factory reset con LED_RANGO destellando 10 veces.
+
+COMMIT: fix FUOTA, fix factory reset aleatorio, add indicador FR.
+Nro:

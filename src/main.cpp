@@ -13,11 +13,12 @@
 // Info:    Template para sistema de monitoreo sobre hardware Termometro_8266 V1.0
 //            
 //          
-// TODO:       en el factory reset dar nombre aleatorio a 'device' o con MAC
+// TODO:    
 //        
 //
 // BUGS:    
 //          No graba nombre desde portal cautivo
+//          Factory reset cuando tiene fuente externa.  
 //                   
 //
 // COMMIT:  
@@ -116,29 +117,12 @@ void setup() {
   //Serial.setDebugOutput(true);
   delay(100);
 
-  //--Configuración interrupción por timer
-  noInterrupts();
-  timer0_isr_init();
-  timer0_attachInterrupt(timer0_ISR);
-  timer0_write(ESP.getCycleCount() + 80000000L); // 80MHz == 1sec
-  interrupts();
-  delay(100);
-
   Serial.println(tipo_device);
   Serial.print("Version:");
   Serial.print(fversion);
   EEPROM.begin(MAX_BYTE_EEPROM);
   LittleFS.begin();
-
-  //--Factory reset
-  pinMode(FRESET,INPUT);
-  if (digitalRead(FRESET)){
-    Serial.println("\r\nFactory reset!!");
-    factory_reset();
-  }
-  read_vars(1);  
   
-
   //--Pines
   pinMode(LED_WIFI,OUTPUT);
   pinMode(LED_PULSO,OUTPUT);
@@ -148,7 +132,9 @@ void setup() {
   //--Pone en 0 los pines de los canales
   digitalWrite(CANAL1, LOW);
   digitalWrite(CANAL2, LOW);
-  
+
+  factory_reset();
+  read_vars(1);  
   bienvenida();
 
   //--Tópicos
@@ -168,11 +154,13 @@ void setup() {
   //--Inicializacion de webserver
   init_webserver();
 
-  //--Muestra parámetros de flash
-  //Serial.print("sketch size:");Serial.println(ESP.getSketchSize ());
-  //Serial.print("free sketch:");Serial.println(ESP.getFreeSketchSpace());
-  //Serial.print("flash real size:");Serial.println(ESP.getFlashChipRealSize());
-  //Serial.print("free heap:");Serial.println(ESP.getFreeHeap());
+  //--Configuración interrupción por timer
+  noInterrupts();
+  timer0_isr_init();
+  timer0_attachInterrupt(timer0_ISR);
+  timer0_write(ESP.getCycleCount() + 80000000L); // 80MHz == 1sec
+  interrupts();
+  delay(100);
 }
 
 void loop() {

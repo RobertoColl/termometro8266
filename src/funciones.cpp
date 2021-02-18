@@ -70,26 +70,45 @@ void bienvenida(){
 }
 
 void factory_reset(void){
-  write_StringEE(device_eeprom_pos, device+String(random(1,1000))); //agrega nº random al nombre
-  write_StringEE(mqtt_server_eeprom_pos, mqtt_server);
-  write_StringEE(mqtt_tcp_str_eeprom_pos, mqtt_tcp_str);
-  write_StringEE(passwd_AP_eeprom_pos, passwd_AP);
-  write_StringEE(ssid_eeprom_pos, ssid);
-  write_StringEE(ssid_passwd_eeprom_pos, ssid_pass);
-  write_StringEE(ubicacion_eeprom_pos, ubicacion);
-  write_StringEE(fuota_eeprom_pos, fuota_server);
-  write_StringEE(area_eeprom_pos, area);
-  write_StringEE(canal1_eeprom_pos, String(canal1_status));
-  write_StringEE(canal2_eeprom_pos, String(canal2_status));
-  write_StringEE(tmax_eeprom_pos, String(tmax));
-  write_StringEE(tmin_eeprom_pos, String(tmin));
-  write_StringEE(offset_eeprom_pos, String(offset));
-  write_StringEE(gain_eeprom_pos, String(gain));
-  write_StringEE(sensor_eeprom_pos, String(sensor));
+  pinMode(FRESET,INPUT);
+  delay(50);
+  if (digitalRead(FRESET)){
+    delay(150);
+    if (digitalRead(FRESET)){
+      Serial.println("\r\nFactory reset!!");
+      for (int i=0; i<10; i++){
+        digitalWrite(LED_RANGO,HIGH);
+        delay(50);
+        digitalWrite(LED_RANGO,LOW);
+        delay(50);
+      }
+      write_StringEE(device_eeprom_pos, device+String(random(1,1000))); //agrega nº random al nombre
+      write_StringEE(mqtt_server_eeprom_pos, mqtt_server);
+      write_StringEE(mqtt_tcp_str_eeprom_pos, mqtt_tcp_str);
+      write_StringEE(passwd_AP_eeprom_pos, passwd_AP);
+      write_StringEE(ssid_eeprom_pos, ssid);
+      write_StringEE(ssid_passwd_eeprom_pos, ssid_pass);
+      write_StringEE(ubicacion_eeprom_pos, ubicacion);
+      write_StringEE(fuota_eeprom_pos, fuota_server);
+      write_StringEE(area_eeprom_pos, area);
+      write_StringEE(canal1_eeprom_pos, String(canal1_status));
+      write_StringEE(canal2_eeprom_pos, String(canal2_status));
+      write_StringEE(tmax_eeprom_pos, String(tmax));
+      write_StringEE(tmin_eeprom_pos, String(tmin));
+      write_StringEE(offset_eeprom_pos, String(offset));
+      write_StringEE(gain_eeprom_pos, String(gain));
+      write_StringEE(sensor_eeprom_pos, String(sensor));
+      noInterrupts();
+      EEPROM.commit();
+      interrupts();
+    }
+  }
+  pinMode(FRESET,OUTPUT);
 
-  noInterrupts();
-  EEPROM.commit();
-  interrupts();
+
+
+
+
 }
 
 void read_vars(bool ver){
@@ -220,7 +239,7 @@ void write_vars(void){
   return decValue;
 }*/
 
-void update_started() {
+/*void update_started() {
   Serial.println("CALLBACK:  HTTP update process started");
 }
 
@@ -234,7 +253,7 @@ void update_progress(int cur, int total) {
 
 void update_error(int err) {
   Serial.printf("CALLBACK:  HTTP update fatal error code %d\n", err);
-}
+}*/
 
 void check_update(void){
   String flag_update=read_StringEE(flag_update_eeprom_pos,1);//500
@@ -248,14 +267,14 @@ void check_update(void){
     interrupts();
     Serial.println("Actualizando.....");
 
-    ESPhttpUpdate.onStart(update_started);
+    /*ESPhttpUpdate.onStart(update_started);
     ESPhttpUpdate.onEnd(update_finished);
     ESPhttpUpdate.onProgress(update_progress);
-    ESPhttpUpdate.onError(update_error);
+    ESPhttpUpdate.onError(update_error);*/
     WiFiClient wf_client;
     ESPhttpUpdate.setLedPin(LED_RANGO, LOW);
     LittleFS.end();
-    ESP.wdtDisable();
+    //ESP.wdtDisable();
   
   
     //Serial.println("http://"+fuota_server+"/updates/"+tipo_device+"/"+version+"/firmware.bin");

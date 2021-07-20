@@ -125,17 +125,9 @@ void handle_estado() {
       <label for='vi'>Valores instantáneos</label><p>\
       Temperatura\
       <span class='text-primary' id='ti'>"+ tempinst +"</span> ºC<p>\
-      Humedad\
-      <span class='text-primary' id='hi'>50 %</span><p>\
-      Nivel\
-      <span class='text-primary' id='ni'>12 m</span><p>\
       <label for='vp'>Valores Promedio</label><p>\
       Temperatura\
       <span class='text-primary' id='tp'>"+temperatura+" ºC</span><p>\
-      Humedad\
-      <span class='text-primary' id='hp'>50 %</span><p>\
-      Nivel\
-      <span class='text-primary' id='np'>12 m</span><p>\
      </div>\
      <div class='well'><h2 class='text-center'>Estado canales</h2><p>\
       Canal 1\

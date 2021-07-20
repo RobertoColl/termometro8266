@@ -30,4 +30,22 @@ ADD:
 1.  Indicador de factory reset con LED_RANGO destellando 10 veces.
 
 COMMIT: fix FUOTA, fix factory reset aleatorio, add indicador FR.
+Nro:    9ab7951a2334e4bbd79e909970fce5924bf0aeac
+
+//--------------------------------------------------------------------------------------------------------
+10/03/2021
+
+ADD:
+1. Add MAC Address al comando 'ip'
+
+20/07/2021
+
+FIX: Cuando cambiaba un parámetro desde widget share attributes, no releía la EEPROM, por lo tanto no impactaba inmediatamente el cambio de rango.
+Solución: add read_vars(0); a la línea 96 del archivo comandos.cpp
+Se cambia a versión 2.0.1
+
+COMMIT: fix lectura de EEPROM por cambio de atributos desde widget.
 Nro:
+TAG: 2.0.1
+
+//--------------------------------------------------------------------------------------------------------

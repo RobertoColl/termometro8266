@@ -10,6 +10,7 @@
 #define LED_WIFI                      2
 #define LED_RANGO                     16
 #define FRESET                        14    // pin para factory reset
+#define CS_PIN                        4    // pin para CS de la SD
 
 /*===================[Definiciones de software]==================================*/
 #define SERIAL_BAUDRATE               19200

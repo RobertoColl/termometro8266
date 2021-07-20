@@ -93,6 +93,7 @@ void rpc_proc(char* topic, byte* payload, unsigned int length){
         }
         //--Grabar en eeprom 
         write_vars();
+        read_vars(0);
         //--Publicar atributos 
         flag_push_att=1;
         publica_atributos();
@@ -394,6 +395,7 @@ void rpc_ident(void){
 void rpc_ip(void){
     out["IP Wlan"]=String(WiFi.localIP()[0])+"."+String(WiFi.localIP()[1])+"."+String(WiFi.localIP()[2])+"."+String(WiFi.localIP()[3]);
     out["IP AP"]=String(WiFi.softAPIP()[0])+"."+String(WiFi.softAPIP()[1])+"."+String(WiFi.softAPIP()[2])+"."+String(WiFi.softAPIP()[3]);
+    out["MAC"]=String(WiFi.macAddress());
     send_rpc_rta();
 }
 

@@ -5,20 +5,30 @@
  * *******************************************************************************/
 
 /*===================[File header]===============================================*/
-// File:    main.cpp
-// Author:  Marcelo Castello (https://github.com/mcastellogh)
-// Licence: GPLV3+
-// Version: 2.0.0
-// Date:    Diciembre 2020
-// Info:    Template para sistema de monitoreo sobre hardware Termometro_8266 V1.0
-//            
-//          
+// File:                main.cpp
+// Author:              Marcelo Castello (https://github.com/mcastellogh)
+// Licence:             GPLV3+
+// Version:             2.0.0
+// Date:                Diciembre 2020
+// Info:                Template para sistema de monitoreo sobre hardware Termometro 8266 V1.0
+
+//=============== [Datos para almacenamiento] ======================================
+// PCB:                 Termometro V1.0
+// Plataforma:          ESP8266  
+// Uso:                 Template
+// Carpeta:             termometro_V1_8266
+// Nombre de Proyecto:  template
+
 // TODO:    
 //        
 //
 // BUGS:    
-//          No graba nombre desde portal cautivo
-//          Factory reset cuando tiene fuente externa.  
+//          - No graba nombre desde portal cautivo=>Sí graba, pero cuando cambio nombre debe hacer nuevamente broker.init para que tome el nuevo valor
+//            Solucion temporal: resetear luego de cambiar nombre.
+//
+//          - Factory reset cuando tiene fuente externa. 
+//
+//          - Al crear un nuevo dispositivo desde TB: No enciende led online, no publica attributos Tmax y Tmin (probar nuevamente)
 //                   
 //
 // COMMIT:  
@@ -90,7 +100,7 @@ uint8_t MAX_mqtt_conn_timeout     =   10;       //timeout en segundos para la co
 uint8_t MAX_live_timeout_mqtt     =   5;        //timeout en minutos de desaparicion de broker
 float  hist_rango                 =   0.5;      //histeresis en grados para la determinacion del rango
 //-- Versiones
-String fversion                   =   "2.0.0";          
+String fversion                   =   "2.0.1";          
 String hversion                   =   "1.0.0";  //en PCB Termometro 1.0
 
 /*===================[Variables globales]========================================*/
@@ -116,6 +126,9 @@ void setup() {
   Serial.begin(SERIAL_BAUDRATE);
   //Serial.setDebugOutput(true);
   delay(100);
+
+
+  
 
   Serial.println(tipo_device);
   Serial.print("Version:");
